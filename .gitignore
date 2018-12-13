@@ -1,0 +1,14 @@
+## packages
+/node_modules/*
+
+## development settings
+/.vscode/*
+*.eslintrc.json
+package-lock.json
+
+## auto gen api doc
+.template.html
+doc.js
+
+## sqlite files
+/localdb/*
