@@ -1,17 +1,29 @@
 {
   "development": {
     "storage":"../../localdb/reddit.sqlite",
-    "dialect": "sqlite"
+    "dialect": "sqlite",
+    "define":{
+      "freezeTableName": true,
+      "timestamps": false
+    }
   },
   "test": {
     "dialect": "sqlite",
-    "storage": ":memory:"
+    "storage": ":memory:",
+    "define":{
+      "freezeTableName": true,
+      "timestamps": false
+    }
   },
   "production": {
     "username": "root",
     "password": null,
     "database": "database_production",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "define":{
+      "freezeTableName": true,
+      "timestamps": false
+    }
   }
 }
