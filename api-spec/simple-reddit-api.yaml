@@ -1,0 +1,328 @@
+openapi: 3.0.0
+info:
+  title: Simple RESTful Reddit
+  description: >-
+    Optional multiline or single-line description in
+    [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.1.9
+servers:
+  - url: 'http://api.example.com/v1'
+    description: 'Optional server description, e.g. Main (production) server'
+  - url: 'http://staging-api.example.com'
+    description: 'Optional server description, e.g. Internal staging server for testing'
+tags:
+  - name: users
+    description: Everything about your Pets
+    externalDocs:
+      url: 'http://docs.my-api.com/pet-operations.htm'
+  - name: posts
+    description: Everything about your Pets
+    externalDocs:
+      url: 'http://docs.my-api.com/pet-operations.htm'
+  - name: communities
+    description: Everything about your Pets
+    externalDocs:
+      url: 'http://docs.my-api.com/pet-operations.htm'
+  - name: authentication/authorization
+    description: Everything about your Pets
+    externalDocs:
+      url: 'http://docs.my-api.com/pet-operations.htm'
+paths:
+  /auth/token:
+    post:
+      summary: Create a token for authentication and authorization.
+      tags:
+        - authentication/authorization
+      requestBody:
+        description: Requires informations for authentication.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+  '/users/{username}':
+    get:
+      tags:
+        - users
+      summary: Returns the user.
+      description: Optional extended description in CommonMark or HTML.
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: The name of the user to get.
+      responses:
+        '200':
+          description: user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users:
+    post:
+      summary: Add a new user
+      tags:
+        - users
+      requestBody:
+        description: Optional description in *Markdown*
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Created
+  /posts:
+    get:
+      summary: Return list of posts
+      tags:
+        - posts
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - in: query
+          name: sort
+          description: Sort list in descending order of following tactics.
+          schema:
+            type: string
+            enum:
+              - best
+              - hot
+              - top
+              - new
+              - rising
+              - controversial
+        - in: query
+          name: search
+          description: Search for key words.
+          schema:
+            type: string
+        - in: query
+          name: popular
+          description: >-
+            If true returns posts for popular, else returns posts user
+            subscribed.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+  '/posts/{post_id}':
+    get:
+      summary: Return content of the post.
+      tags:
+        - posts
+      parameters:
+        - $ref: '#/components/parameters/postIdParam'
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+  '/posts/{post_id}/comments':
+    parameters:
+      - $ref: '#/components/parameters/postIdParam'
+    get:
+      summary: Returns comments of the post.
+      tags:
+        - posts
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+    post:
+      summary: Add new comment for the post.
+      tags:
+        - posts
+      security: 
+      - bearerAuth: []
+      requestBody:
+        description: comment
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '201':
+          description: Created
+  /communities:
+    post:
+      summary: Create a new community.
+      tags:
+        - communities
+      requestBody:
+        description: new community
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/community'
+      responses:
+        '201':
+          description: Created
+  '/comminites/{communityname}':
+    get:
+      summary: Returns a community.
+      tags:
+        - communities
+      parameters:
+        - $ref: '#/components/parameters/communityNameParam'
+      responses:
+        '200':
+          description: Community
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/community'
+  '/communties/{communityname}/posts':
+    parameters:
+      - $ref: '#/components/parameters/communityNameParam'
+    get:
+      summary: Returns posts of the community.
+      tags:
+        - posts
+        - communities
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - in: query
+          name: sort
+          description: Sort list in descending order of following tactics.
+          schema:
+            type: string
+            enum:
+              - best
+              - hot
+              - top
+              - new
+              - rising
+              - controversial
+        - in: query
+          name: search
+          description: Search for key words.
+          schema:
+            type: string
+        - in: query
+          name: popular
+          description: >-
+            If true returns posts for popular, else returns posts user
+            subscribed.
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: A list of posts.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/post'
+    post:
+      summary: Add a new post in the community.
+      tags:
+        - communities
+        - posts
+      requestBody:
+        description: new post
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/post'
+      responses:
+        '201':
+          description: Created
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    post:
+      type: object
+      properties:
+        postId:
+          type: integer
+        title:
+          type: string
+    community:
+      type: object
+      properties:
+        communityName:
+          type: string
+    comment:
+      type: object
+      properties:
+        commentId:
+          type: integer
+  parameters:
+    offsetParam:
+      name: offset
+      in: query
+      description: Number of items to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+    communityNameParam:
+      name: communityname
+      in: path
+      schema:
+        type: string
+      required: true
+      description: Name of the community.
+    postIdParam:
+      name: post_id
+      in: path
+      schema:
+        type: integer
+      required: true
+      description: ID of the post.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
