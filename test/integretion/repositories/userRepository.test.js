@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { sequelize, User } = require('../../../orm/models');
 const UserRepository = require('../../../repositories/userRepository');
-const { IncorrectPasswordError, UserNotFoundError } = require('../../../repositories/errors');
+const { IncorrectPasswordError, UserNotFoundError, UserNameAlreadyExistsError } = require('../../../repositories/errors');
 
 describe('UserRepository', () => {
   const userRepository = UserRepository.instance;
@@ -22,6 +22,15 @@ describe('UserRepository', () => {
     }).then((model) => {
       expect(model).to.exist;
     }));
+  it('when the userName already exists, should return Promise<UserNameAlreadyExistsError>', () => {
+    return userRepository.create({
+      userName: 'test1',
+      password: 'tess123',
+      email: 'test@mail.com',
+    }).catch((error) => {
+      expect(error).is.instanceOf(UserNameAlreadyExistsError);
+    });
+  });
   // TODO: Add test suite for generic repository motheds.
 
   it('when user is verified, should return Promise<user>', () => userRepository.verify({

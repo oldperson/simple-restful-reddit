@@ -1,8 +1,8 @@
 
 const { hash, compare } = require('bcrypt');
-const { User } = require('../orm/models');
+const { User, Sequelize } = require('../orm/models');
 const GenericRepository = require('./genericRepository');
-const { UserNotFoundError, IncorrectPasswordError } = require('./errors');
+const { UserNotFoundError, IncorrectPasswordError, UserNameAlreadyExistsError } = require('./errors');
 
 /**
  * The cost factor controls how many calculations to hash the password,
@@ -27,7 +27,13 @@ class UserRepository extends GenericRepository {
    */
   create({ userName, email, password }) {
     return hash(password, rounds)
-      .then(passwordHash => super.create({ userName, email, passwordHash }));
+      .then(passwordHash => super.create({ userName, email, passwordHash }))
+      .catch(((error) => {
+        if (error instanceof Sequelize.UniqueConstraintError) {
+          throw new UserNameAlreadyExistsError(userName);
+        }
+        throw error;
+      }));
   }
 
   /**
