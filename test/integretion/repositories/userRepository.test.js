@@ -22,15 +22,13 @@ describe('UserRepository', () => {
     }).then((model) => {
       expect(model).to.exist;
     }));
-  it('when the userName already exists, should return Promise<UserNameAlreadyExistsError>', () => {
-    return userRepository.create({
-      userName: 'test1',
-      password: 'tess123',
-      email: 'test@mail.com',
-    }).catch((error) => {
-      expect(error).is.instanceOf(UserNameAlreadyExistsError);
-    });
-  });
+  it('when the userName already exists, should return Promise<UserNameAlreadyExistsError>', () => userRepository.create({
+    userName: 'test1',
+    password: 'tess123',
+    email: 'test@mail.com',
+  }).catch((error) => {
+    expect(error).is.instanceOf(UserNameAlreadyExistsError);
+  }));
   // TODO: Add test suite for generic repository motheds.
 
   it('when user is verified, should return Promise<user>', () => userRepository.verify({
@@ -47,12 +45,10 @@ describe('UserRepository', () => {
     expect(error).to.be.instanceOf(IncorrectPasswordError);
   }));
 
-  it('when username is not found, should return Promis<UserNotFoundError>', () => { 
-    return userRepository.verify({
-      userName: '1111',
-      password: 'p@ssw@d',
-    }).catch((error) => {
-      expect(error).to.be.instanceOf(UserNotFoundError);
-    });
-  });
+  it('when username is not found, should return Promis<UserNotFoundError>', () => userRepository.verify({
+    userName: '1111',
+    password: 'p@ssw@d',
+  }).catch((error) => {
+    expect(error).to.be.instanceOf(UserNotFoundError);
+  }));
 });
