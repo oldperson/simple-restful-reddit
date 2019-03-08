@@ -16,3 +16,12 @@ class IncorrectPasswordError extends Error {
   }
 }
 module.exports.IncorrectPasswordError = IncorrectPasswordError;
+
+class UserNameAlreadyExistsError extends Error {
+  constructor(userName) {
+    super(`'${userName}' already exists`);
+    this.name = 'UserNameAlreadyExistsError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+module.exports.UserNameAlreadyExistsError = UserNameAlreadyExistsError;
