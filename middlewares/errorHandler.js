@@ -2,10 +2,10 @@ const { createErrorBody } = require('../formats/responseBody');
 
 /**
  * Return a express middleware to handle error.
- * If evn = 'production' would give a customized response with
+ * If evn = 'production' it would give a customized response with
  * http status 500 and
  * body { message: 'Internal Server Error },
- * else pass error to next handler.
+ * else it would pass error to next handler.
  * @param {string} env
  * @returns {function}
  */
