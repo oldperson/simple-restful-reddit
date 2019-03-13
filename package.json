@@ -17,6 +17,7 @@
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "express-api-doc": "0.0.12",
+    "jsonwebtoken": "^8.5.0",
     "sequelize": "^4.41.2",
     "sqlite3": "^4.0.4"
   },
