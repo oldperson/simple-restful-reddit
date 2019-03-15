@@ -1,10 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const jwt = require('express-jwt');
 
 const usersRouter = require('./routers/users');
 const authTokensRouter = require('./routers/authTokens');
+const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
 
 const port = process.env.port || 3000;
+const secret = process.env.JWT_SECRET_KEY;
 const app = express();
 
 app.listen(port, () => {
@@ -12,15 +15,19 @@ app.listen(port, () => {
   console.error(`listening port ${port}`);
 });
 
-// middlewares
+// ---------- middlewares-------------
 app.use(bodyParser.json());
+app.use(jwt({ secret, credentialsRequired: false })); // if auth token exists, add req.user
 
-// routers
+// ----------routers------------------
 app.use('/users', usersRouter);
 app.use('/authTokens', authTokensRouter);
 
 app.get('/hello/:name', (req, res) => {
   res.status(200).send(`hello ${req.params.name}`);
 });
+
+// -------errorHandlers---------------
+app.use(jwtErrorHandler);
 
 module.exports = app;
