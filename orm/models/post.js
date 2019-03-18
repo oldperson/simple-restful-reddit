@@ -5,6 +5,14 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Post', {
     autoIncrement: true,
     allowNull: false,
   },
+  communityId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Community',
+      key: 'communityId',
+    },
+  },
   title: {
     type: DataTypes.STRING(20),
     allowNull: false,
