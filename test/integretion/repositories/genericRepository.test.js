@@ -3,7 +3,7 @@ const { User, sequelize } = require('../../../orm/models');
 const GenericRepositoy = require('../../../repositories/genericRepository');
 
 
-describe('GenericRepositoy', () => {
+describe('GenericRepository', () => {
   const repository = new GenericRepositoy(User);
 
   beforeEach('reset db', () => sequelize.sync({ force: true }));

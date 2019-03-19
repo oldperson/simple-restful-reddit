@@ -14,7 +14,7 @@ const defaultCommunity = {
 };
 
 describe('postRepository', () => {
-  before('Set up user and community date',
+  before('Set up user and community data',
     () => sequelize.sync({ force: true })
       .then(() => User.create(defaultUser))
       .then(() => Community.create(defaultCommunity)));
