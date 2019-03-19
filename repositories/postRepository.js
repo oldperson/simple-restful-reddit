@@ -18,7 +18,7 @@ class PostRepository extends GenericRepository {
    */
   createUnder(communityName, post) {
     const { sequelize } = this.sequelizeModel;
-    const now = new Date().toISOString();
+    const now = new Date();
     const replacements = Object.assign({
       communityName,
       createdAt: now,
@@ -32,7 +32,10 @@ class PostRepository extends GenericRepository {
     return sequelize.query(sql, {
       replacements,
       type: sequelize.QueryTypes.INSERT,
-    }).then(results => ({ postId: results[0] }));
+    }).then((results) => {
+      [replacements.postId] = results;
+      return replacements;
+    });
   }
 }
 

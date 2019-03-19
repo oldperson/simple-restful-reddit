@@ -12,7 +12,7 @@ const defaultCommunity = {
   communityId: 1,
   communityName: 'comForTest',
 };
-
+// TODO: resolve table lock, when all repository tests run simultaneously.
 describe('postRepository', () => {
   before('Set up user and community data',
     () => sequelize.sync({ force: true })
@@ -30,6 +30,7 @@ describe('postRepository', () => {
       return postRepository.createUnder(defaultCommunity.communityName, post)
         .then((result) => {
           expect(result.postId).to.exist;
+          expect(result).includes(post);
         });
     });
   });
