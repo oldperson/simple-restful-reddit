@@ -4,7 +4,7 @@
     "dialect": "sqlite",
     "define":{
       "freezeTableName": true,
-      "timestamps": false
+      "timestamps": true
     }
   },
   "test": {
@@ -12,7 +12,7 @@
     "storage": ":memory:",
     "define":{
       "freezeTableName": true,
-      "timestamps": false
+      "timestamps": true
     }
   },
   "production": {
@@ -23,7 +23,7 @@
     "dialect": "mysql",
     "define":{
       "freezeTableName": true,
-      "timestamps": false
+      "timestamps": true
     }
   }
 }
