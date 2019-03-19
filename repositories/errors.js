@@ -17,11 +17,11 @@ class IncorrectPasswordError extends Error {
 }
 module.exports.IncorrectPasswordError = IncorrectPasswordError;
 
-class UserNameAlreadyExistsError extends Error {
-  constructor(userName) {
-    super(`'${userName}' already exists`);
-    this.name = 'UserNameAlreadyExistsError';
+class ValueAlreadyExistsError extends Error {
+  constructor(field, value) {
+    super(`${field}: '${value}' already exists`);
+    this.name = 'ValueAlreadyExistsError';
     Error.captureStackTrace(this, this.constructor);
   }
 }
-module.exports.UserNameAlreadyExistsError = UserNameAlreadyExistsError;
+module.exports.ValueAlreadyExistsError = ValueAlreadyExistsError;
