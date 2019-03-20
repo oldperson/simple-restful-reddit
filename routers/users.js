@@ -12,13 +12,6 @@ const router = express.Router();
 router.post('/', (req, res, next) => {
   userRepository.create(req.body)
     .then(user => res.status(201).json(user))
-    .catch((error) => { // handle the ValueAlreadyExistsError
-      if (error instanceof ValueAlreadyExistsError) {
-        // if createErrorBody throws error can be handled by next Promise.catch()
-        return res.status(409).json(createErrorBody(error));
-      }
-      throw error;
-    })
     .catch(error => next(error));
 });
 

@@ -5,6 +5,7 @@ const jwt = require('express-jwt');
 const usersRouter = require('./routers/users');
 const authTokensRouter = require('./routers/authTokens');
 const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
+const repositoryErrorHandler = require('./middlewares/repositoryErrorHandler');
 
 const port = process.env.port || 3000;
 const secret = process.env.JWT_SECRET_KEY;
@@ -29,5 +30,6 @@ app.get('/hello/:name', (req, res) => {
 
 // -------errorHandlers---------------
 app.use(jwtErrorHandler);
+app.use(repositoryErrorHandler);
 
 module.exports = app;
