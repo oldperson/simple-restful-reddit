@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
-const { repositoryErrorHandler } = require('../../../middlewares/repositoryErrorHandler');
+const repositoryErrorHandler = require('../../../middlewares/repositoryErrorHandler');
 const { ValueAlreadyExistsError } = require('../../../repositories/errors');
 
 describe('repositoryErrorHandler', () => {

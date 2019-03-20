@@ -19,4 +19,4 @@ function repositoryErrorHandler(err, req, res, next) {
   }
   return res.status(status).json(createErrorBody(err));
 }
-module.exports.repositoryErrorHandler = repositoryErrorHandler;
+module.exports = repositoryErrorHandler;
