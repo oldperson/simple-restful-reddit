@@ -25,3 +25,12 @@ class ValueAlreadyExistsError extends Error {
   }
 }
 module.exports.ValueAlreadyExistsError = ValueAlreadyExistsError;
+
+class IdentityNotFoundError extends Error {
+  constructor(field, indentity) {
+    super(`${field}: '${indentity}' is not found`);
+    this.name = 'IdentityNotFoundError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+module.exports.IdentityNotFoundError = IdentityNotFoundError;

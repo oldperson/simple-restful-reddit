@@ -14,6 +14,10 @@ function repositoryErrorHandler(err, req, res, next) {
     status = 409;
   }
 
+  if (err instanceof RepositoryError.IdentityNotFoundError) {
+    status = 409;
+  }
+
   if (!status) {
     return next(err);
   }
