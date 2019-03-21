@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const { sequelize, User, Community } = require('../../../orm/models');
 const postRepository = require('../../../repositories/postRepository').instance;
+const { IdentityNotFoundError } = require('../../../repositories/errors');
 
 const defaultUser = {
   userId: 1,
@@ -31,6 +32,30 @@ describe('postRepository', () => {
         .then((result) => {
           expect(result.postId).to.exist;
           expect(result).includes(post);
+        });
+    });
+
+    it('should return Promise<IdentiryNotFoundError> when community not exists', () => {
+      const post = {
+        title: 'new post',
+        content: 'hello',
+        authorId: defaultUser.userId,
+      };
+      return postRepository.createUnder('notExistsCom', post)
+        .catch((error) => {
+          expect(error).to.be.instanceof(IdentityNotFoundError);
+        });
+    });
+
+    it('should return Promise<IdentiryNotFoundError> when autorId not exists', () => {
+      const post = {
+        title: 'new post',
+        content: 'hello',
+        authorId: 99,
+      };
+      return postRepository.createUnder(defaultCommunity.communityName, post)
+        .catch((error) => {
+          expect(error).to.be.instanceof(IdentityNotFoundError);
         });
     });
   });
