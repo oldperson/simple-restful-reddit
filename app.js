@@ -7,6 +7,7 @@ const authTokensRouter = require('./routers/authTokens');
 const communityRouter = require('./routers/communities');
 const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
 const repositoryErrorHandler = require('./middlewares/repositoryErrorHandler');
+const authorizationHandler = require('./middlewares/authoriztionHandler');
 
 const port = process.env.port || 3000;
 const secret = process.env.JWT_SECRET_KEY;
@@ -20,6 +21,12 @@ app.listen(port, () => {
 // ---------- middlewares-------------
 app.use(bodyParser.json());
 app.use(jwt({ secret, credentialsRequired: false })); // if auth token exists, add req.user
+app.use(authorizationHandler.unless({
+  path: [
+    { url: '/users', methods: ['POST'] },
+    { url: '/authTokens', methods: ['POST'] },
+  ],
+}));
 
 // ----------routers------------------
 app.use('/users', usersRouter);
