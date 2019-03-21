@@ -4,6 +4,7 @@ const jwt = require('express-jwt');
 
 const usersRouter = require('./routers/users');
 const authTokensRouter = require('./routers/authTokens');
+const communityRouter = require('./routers/communities');
 const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
 const repositoryErrorHandler = require('./middlewares/repositoryErrorHandler');
 
@@ -23,6 +24,7 @@ app.use(jwt({ secret, credentialsRequired: false })); // if auth token exists, a
 // ----------routers------------------
 app.use('/users', usersRouter);
 app.use('/authTokens', authTokensRouter);
+app.use('/communities', communityRouter);
 
 app.get('/hello/:name', (req, res) => {
   res.status(200).send(`hello ${req.params.name}`);
