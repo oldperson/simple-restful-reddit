@@ -46,6 +46,47 @@ class PostRepository extends GenericRepository {
       throw error;
     });
   }
+
+  /**
+   * @param {string} communityName
+   * @param {object} [options={}]
+   * @param {number} [options.offset=0]
+   * @param {number} [options.limit=20]
+   * @param {string} [options.sort=new]
+   * @param {string} [options.search]
+   */
+  findUnder(communityName, options = {}) {
+    const replacements = Object.assign({
+      offset: 0,
+      limit: 20,
+      sort: 'new',
+    }, options);
+    const sqlTrunks = [
+      `SELECT Post.postId, Post.title, Post.authorId
+         FROM Post
+        INNER JOIN Community
+           ON Post.communityId = Community.communityId
+          AND Community.communityName = :communityName`];
+
+    replacements.communityName = communityName;
+    if (options.search) {
+      replacements.search = `%${replacements.search}%`;
+      sqlTrunks.push('AND Post.title LIKE :search');
+    }
+    switch (options.sort) {
+      case 'new':
+        sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');
+        break;
+      default:
+        sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');
+        break;
+    }
+    sqlTrunks.push('LIMIT :limit OFFSET :offset');
+    return this.sequelizeModel.sequelize.query(sqlTrunks.join(' '), {
+      replacements,
+      type: Sequelize.QueryTypes.SELECT,
+    });
+  }
 }
 
 module.exports = PostRepository;
