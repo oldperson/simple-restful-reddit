@@ -17,4 +17,8 @@ router.post('/:communityName/posts/', (req, res, next) => {
     .then(posted => res.status(201).json(posted))
     .catch(error => next(error));
 });
+
+router.get('/:communityName/posts/', (req, res, next) => postRepository.findUnder(req.params.communityName, req.query)
+  .then(results => res.status(200).json(results))
+  .catch(error => next(error)));
 module.exports = router;
