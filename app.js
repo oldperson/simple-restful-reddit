@@ -22,6 +22,7 @@ app.listen(port, () => {
 app.use(bodyParser.json());
 app.use(jwt({ secret, credentialsRequired: false })); // if auth token exists, add req.user
 app.use(authorizationHandler.unless({
+  method: ['GET'],
   path: [
     { url: '/users', methods: ['POST'] },
     { url: '/authTokens', methods: ['POST'] },
