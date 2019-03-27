@@ -4,12 +4,14 @@ const { createErrorBody } = require('../formats/responseBody');
 const userRepository = require('../repositories/userRepository').instance;
 const { ValueAlreadyExistsError } = require('../repositories/errors');
 
+const { validate } = require('../middlewares/valiationHandler');
+const schemas = require('../validation/schemas');
 // methods
 // create user
 const router = express.Router();
 
 // creat user
-router.post('/', (req, res, next) => {
+router.post('/', validate(schemas.newUser), (req, res, next) => {
   userRepository.create(req.body)
     .then(user => res.status(201).json(user))
     .catch(error => next(error));

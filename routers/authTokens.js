@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository').instance;
 const { UserNotFoundError, IncorrectPasswordError } = require('../repositories/errors');
 const { createErrorBody } = require('../formats/responseBody');
+const { validate } = require('../middlewares/valiationHandler');
+const schemas = require('../validation/schemas');
 
 // constants
 const router = express.Router();
@@ -14,7 +16,7 @@ const secret = process.env.JWT_SECRET_KEY;
 // methods
 
 // create authenticaton token
-router.post('/', (req, res, next) => {
+router.post('/', validate(schemas.newAuthToken), (req, res, next) => {
   userRepository.verify(req.body)
     .then(user => jwtSign({ userId: user.userId, userName: user.userName },
       secret,

@@ -87,3 +87,19 @@ const newPost = {
   },
 };
 module.exports.newPost = newPost;
+
+const newAuthToken = {
+  userName: {
+    in: body,
+    exists,
+    not,
+    isEmpty,
+  },
+  password: {
+    in: body,
+    exists,
+    not,
+    isEmpty,
+  },
+};
+module.exports.newAuthToken = newAuthToken;
