@@ -36,6 +36,11 @@ class GenericRepository {
     return this.sequelizeModel.update(changes, { where })
       .then(([affectedCount]) => affectedCount);
   }
+
+  findAll(where) {
+    return this.sequelizeModel.findAll({ where, raw: true })
+      .then(models => models);
+  }
 }
 
 module.exports = GenericRepository;
