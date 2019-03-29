@@ -25,7 +25,9 @@ describe('GenericRepository', () => {
     before(() => User.create(defaultModel));
     after(() => User.truncate());
     it('should find one model', () => repository.findOne({ userName: defaultModel.userName })
-      .then((model) => { expect(model).exist; }));
+      .then((model) => {
+        expect(model).exist;
+      }));
   });
 
   describe('update', () => {

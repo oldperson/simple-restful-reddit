@@ -23,23 +23,26 @@ class GenericRepository {
  * @returns {Promise<object>} Finded model.
  */
   findOne(where) {
-    return this.sequelizeModel.findOne({ where })
-      .then(model => model && model.toJSON());
+    return this.sequelizeModel.findOne({ where, raw: true });
   }
 
   /**
  * Update properties of models.
  * @param {object} changes Valuse would be changed.
  * @param {*} where Values for find the models should be changed.
+ * @returns {Promise<Number>} affectedCount
  */
   update(changes, where) {
     return this.sequelizeModel.update(changes, { where })
       .then(([affectedCount]) => affectedCount);
   }
 
+  /**
+   * Find models meet the condition.
+   * @param {object} where Values for search.
+   */
   findAll(where) {
-    return this.sequelizeModel.findAll({ where, raw: true })
-      .then(models => models);
+    return this.sequelizeModel.findAll({ where, raw: true });
   }
 }
 
