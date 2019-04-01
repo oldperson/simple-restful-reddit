@@ -23,6 +23,10 @@ tags:
     description: Everything about your Pets
     externalDocs:
       url: 'http://docs.my-api.com/pet-operations.htm'
+  - name: comments
+    description: Everything about comments
+    externalDocs:
+      url: 'http://docs.my-api.com/pet-operations.htm'
   - name: authentication/authorization
     description: Everything about your Pets
     externalDocs:
@@ -173,6 +177,23 @@ paths:
       responses:
         '201':
           description: Created
+  '/posts/{post_id}/votes':
+    put:
+      summary: Vote the post
+      parameters:
+        - $ref: '#/components/parameters/postIdParam'
+      tags:
+        - posts
+      requestBody:
+        description: vote
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/vote'
+      responses:
+        '201':
+          description: Created   
   /communities:
     post:
       summary: Create a new community.
@@ -259,6 +280,38 @@ paths:
       responses:
         '201':
           description: Created
+  '/comments/{commentId}/replies':
+    parameters:
+      - $ref: '#/components/parameters/commentIdParam'
+    get:
+      summary: Return all replies of the comment.
+      tags:
+        - comments
+      responses:
+        '200':
+          description: A list of replies.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
+    post:
+      summary: Reply the comment.
+      tags:
+        - comments
+      requestBody:
+        description: new reply
+        required: true
+        content: 
+          application/json:
+            schema:
+              $ref: '#/components/schemas/comment'
+      responses:
+        '201':
+          description: A list of replies,
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/comment'
 components:
   schemas:
     User:
@@ -284,6 +337,11 @@ components:
       type: object
       properties:
         commentId:
+          type: integer
+    vote:
+      type: object
+      properties:
+        value:
           type: integer
   parameters:
     offsetParam:
@@ -321,6 +379,13 @@ components:
         type: integer
       required: true
       description: ID of the post.
+    commentIdParam:
+      name: commentId
+      in: path
+      required: true
+      schema:
+       type: integer
+      description: ID of the comment
   securitySchemes:
     bearerAuth:
       type: http
