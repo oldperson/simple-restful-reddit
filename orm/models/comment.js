@@ -7,10 +7,11 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Comment', {
   },
   postId: {
     type: DataTypes.INTEGER,
-    allowNull: false,
+    allowNull: true,
     references: {
       model: 'Post',
       key: 'postId',
+      comment: 'The post which this comment belongs to. If record is a reply, postId would be null',
     },
   },
   authorId: {
@@ -24,6 +25,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Comment', {
   parentCommentId: {
     type: DataTypes.INTEGER,
     allowNull: true,
+    comment: 'The comment which this reply belongs to. If it is a reply, parentCommentId would be null',
   },
   content: {
     type: DataTypes.TEXT,

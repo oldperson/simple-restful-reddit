@@ -28,7 +28,6 @@ const defaultComment = {
   content: 'expected comment',
 };
 const defaultReply = {
-  postId: 1,
   parentCommentId: 1,
   authorId: 1,
   content: 'expected reply',
@@ -72,7 +71,6 @@ describe('commentRepository', () => {
 
     it('should return replies when give commentId', () => {
       const where = {
-        postId: 1,
         parentCommentId: 1,
       };
       return commentRepository.findAll(where)
@@ -104,7 +102,6 @@ describe('commentRepository', () => {
 
     it('should return replies when give commentId', () => {
       const where = {
-        postId: 1,
         parentCommentId: 1,
       };
       return commentRepository.findAll(where)
