@@ -1,6 +1,6 @@
 const GenericRepository = require('./genericRepository');
-const { Vote } = require('../orm/models');
-
+const { Vote, Sequelize } = require('../orm/models');
+const { IdentityNotFoundError } = require('./errors');
 /**
  * @class Construct a vote repository
  * @param {object} voteModel Set up model to access resources.
@@ -16,7 +16,16 @@ class VoteRepository extends GenericRepository {
    * @returns {Promise<boolean>} success or not
    */
   createOrUpdate(vote) {
-    return this.sequelizeModel.upsert(vote);
+    return this.sequelizeModel.upsert(vote)
+      .catch((error) => {
+        if (error instanceof Sequelize.ForeignKeyConstraintError) {
+          return Promise.reject(new IdentityNotFoundError({
+            postId: vote.postId,
+            userId: vote.userId,
+          }));
+        }
+        return Promise.reject(error);
+      });
   }
 }
 module.exports.GenericRepository = VoteRepository;

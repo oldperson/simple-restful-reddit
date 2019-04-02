@@ -1,3 +1,5 @@
+const { IdentityNotFoundError } = require('./errors');
+
 /**
  * @class Construct a repository providing generic operations on the resource.
  * @param {Object} sequelizeModel Set up sequelize model to access specific table of database.
@@ -14,7 +16,13 @@ class GenericRepository {
  */
   create(data) {
     return this.sequelizeModel.create(data)
-      .then(model => model.toJSON());
+      .then(model => model.toJSON())
+      .catch((error) => {
+        if (error.name === 'SequelizeForeignKeyConstraintError') {
+          return Promise.reject(new IdentityNotFoundError());
+        }
+        return Promise.reject(error);
+      });
   }
 
   /**

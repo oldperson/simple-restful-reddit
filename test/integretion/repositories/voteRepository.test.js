@@ -3,6 +3,7 @@ const {
   sequelize, User, Community, Post, Vote,
 } = require('../../../orm/models');
 const voteRepository = require('../../../repositories/voteRepository').instance;
+const { IdentityNotFoundError } = require('../../../repositories/errors');
 
 const defaultUser = {
   userId: 1,
@@ -55,6 +56,26 @@ describe('VoteRepository', () => {
           } else {
             expect(success).to.be.true;
           }
+        });
+    });
+
+    it('should return Promise<IdentityNotFoundError> when user not exist', () => {
+      const newVote = Object.assign({}, defaultVote);
+      newVote.userId = -1;
+      return voteRepository.createOrUpdate(newVote)
+        .then(() => expect.fail('should throw'))
+        .catch((error) => {
+          expect(error).instanceOf(IdentityNotFoundError);
+        });
+    });
+
+    it('should return Promise<IdentityNotFoundError> when post not exist', () => {
+      const newVote = Object.assign({}, defaultVote);
+      newVote.postId = -1;
+      return voteRepository.createOrUpdate(newVote)
+        .then(() => expect.fail('should throw'))
+        .catch((error) => {
+          expect(error).instanceOf(IdentityNotFoundError);
         });
     });
   });
