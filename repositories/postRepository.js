@@ -62,7 +62,9 @@ class PostRepository extends GenericRepository {
       sort: 'new',
     }, options);
     const sqlTrunks = [
-      `SELECT Post.postId, Post.title, Post.authorId
+      `SELECT Post.postId, Post.title, Post.authorId, Post.updatedAt,
+              (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as Votes,
+              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as Comments
          FROM Post
         INNER JOIN Community
            ON Post.communityId = Community.communityId
@@ -76,6 +78,12 @@ class PostRepository extends GenericRepository {
     switch (options.sort) {
       case 'new':
         sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');
+        break;
+      case 'best':
+        sqlTrunks.push('ORDER BY Votes DESC');
+        break;
+      case 'hot':
+        sqlTrunks.push('ORDER BY Post.UpdatedAt DESC, Votes DESC');
         break;
       default:
         sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');

@@ -1,6 +1,7 @@
+/* eslint-disable arrow-body-style */
 const { expect } = require('chai');
 const {
-  sequelize, User, Community, Post,
+  sequelize, User, Community, Post, Vote,
 } = require('../../../orm/models');
 const postRepository = require('../../../repositories/postRepository').instance;
 const { IdentityNotFoundError } = require('../../../repositories/errors');
@@ -17,24 +18,39 @@ const defaultCommunity = {
 };
 const defaultPosts = [
   {
+    postId: 1,
     title: 'test1',
     content: 'test1 ccontent',
     authorId: 1,
     communityId: 1,
+    createdAt: '2019-3-29',
+    updatedAt: '2019-3-29',
   },
   {
+    postId: 2,
     title: 'test2',
     content: 'test2 ccontent',
     authorId: 1,
     communityId: 1,
+    createdAt: '2019-3-30',
+    updatedAt: '2019-3-30',
   },
   {
+    postId: 3,
     title: 'test3',
     content: 'test3 ccontent',
     authorId: 1,
     communityId: 1,
+    createdAt: '2019-4-1',
+    updatedAt: '2019-4-1',
   },
 ];
+const defaultVote = {
+  postId: 2,
+  userId: 1,
+  value: 1,
+};
+
 // TODO: resolve table lock, when all repository tests run simultaneously.
 describe('postRepository', () => {
   before('Set up user and community data',
@@ -83,7 +99,9 @@ describe('postRepository', () => {
   });
 
   describe('findUnder', () => {
-    before(() => Post.bulkCreate(defaultPosts));
+    before(() => Post.bulkCreate(defaultPosts)
+      .then(() => Vote.upsert(defaultVote)));
+    after(() => Vote.truncate({ truncate: true }));
     it('should use default options when options are undifined', () => postRepository.findUnder(defaultCommunity.communityName)
       .then((results) => {
         expect(results).to.exist;
@@ -91,27 +109,56 @@ describe('postRepository', () => {
       }));
 
     it('should filter out title when options.search is defined', () => {
-      postRepository.findUnder(defaultCommunity.communityName, { search: defaultPosts[0].title })
+      return postRepository
+        .findUnder(defaultCommunity.communityName, { search: defaultPosts[0].title })
         .then((results) => {
           expect(results).to.exist;
           expect(results[0].title).to.equal(defaultPosts[0].title);
         });
+    });
 
-      it('should return limited number of posts when options.limit is defined', () => {
-        postRepository.findUnder(defaultCommunity.communityName, { limit: 1 })
-          .then((results) => {
-            expect(results).to.exist;
-            expect(results.length).equal(1);
-          });
-      });
+    it('should return limited number of posts when options.limit is defined', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { limit: 1 })
+        .then((results) => {
+          expect(results).to.exist;
+          expect(results.length).equal(1);
+        });
+    });
 
-      it('should offset rows when options.offset is defined', () => {
-        postRepository.findUnder(defaultCommunity.communityName, { offset: 1 })
-          .then((results) => {
-            expect(results).to.exist();
-            expect(results.length).to.equal(2);
-          });
-      });
+    it('should offset rows when options.offset is defined', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { offset: 1 })
+        .then((results) => {
+          expect(results).to.exist;
+          expect(results.length).to.equal(2);
+        });
+    });
+
+    it('should sort by votes when options.sort is best', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'best' })
+        .then((posts) => {
+          expect(posts).to.lengthOf(3);
+          expect(posts[0].postId).to.equal(2);
+        });
+    });
+
+    it('should sort by votes when options.sort is hot', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'hot' })
+        .then((posts) => {
+          expect(posts).to.lengthOf(3);
+          expect(posts[0].postId).to.equal(3);
+          expect(posts[1].postId).to.equal(2);
+          expect(posts[2].postId).to.equal(1);
+        });
+    });
+
+    it('should sort by votes when options.sort is new', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'hot' })
+        .then((posts) => {
+          expect(posts).to.lengthOf(3);
+          expect(posts[0].postId).to.equal(3);
+          expect(posts[1].postId).to.equal(2);
+          expect(posts[2].postId).to.equal(1);
+        });
     });
   });
 });
