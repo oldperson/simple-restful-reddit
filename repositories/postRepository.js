@@ -1,5 +1,5 @@
 const GenericRepository = require('./genericRepository');
-const { Post, Sequelize } = require('../orm/models');
+const { Post, Sequelize } = require('../orm/models'); // TODO: get this by Dependency Inejection
 const { IdentityNotFoundError } = require('./errors');
 
 /**
@@ -35,13 +35,13 @@ class PostRepository extends GenericRepository {
       type: sequelize.QueryTypes.INSERT,
     }).then((results) => {
       if (results[1] === 0) { // communityName is not found
-        return Promise.reject(new IdentityNotFoundError('community', communityName));
+        return Promise.reject(new IdentityNotFoundError({ community: communityName }));
       }
       [replacements.postId] = results;
       return replacements;
     }).catch((error) => {
       if (error instanceof Sequelize.ForeignKeyConstraintError) {
-        throw new IdentityNotFoundError('authorId', replacements.authorId);
+        throw new IdentityNotFoundError({ authorId: replacements.authorId });
       }
       throw error;
     });
@@ -90,4 +90,4 @@ class PostRepository extends GenericRepository {
 }
 
 module.exports = PostRepository;
-module.exports.instance = new PostRepository();
+module.exports.instance = new PostRepository(); // TODO: construct in app.js

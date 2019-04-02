@@ -26,9 +26,23 @@ class ValueAlreadyExistsError extends Error {
 }
 module.exports.ValueAlreadyExistsError = ValueAlreadyExistsError;
 
+
 class IdentityNotFoundError extends Error {
-  constructor(field, indentity) {
-    super(`${field}: '${indentity}' is not found`);
+  /**
+   * Create IdentityNotFoundError.
+   * @param {object} identities identityName: identityValue pairs
+   */
+  constructor(identities) {
+    let message;
+    if (identities) {
+      message = `${Object.entries(identities)
+        .reduce((pre, cur) => {
+          pre.push(`'${cur[0]}:${cur[1]}'`);
+          return pre;
+        }, [])
+        .join(' or ')} is not found`;
+    }
+    super(message || 'reference of entity is not found');
     this.name = 'IdentityNotFoundError';
     Error.captureStackTrace(this, this.constructor);
   }
