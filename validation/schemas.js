@@ -30,7 +30,7 @@ const queryOptions = {
     optional,
     isIn: {
       errorMessage: 'should be one of [ best, hot, top, new, rising, controversial ]',
-      options: ['best', 'hot', 'top', 'new', 'rising', 'controversial'],
+      options: [['best', 'hot', 'top', 'new', 'rising', 'controversial']],
     },
   },
 };
