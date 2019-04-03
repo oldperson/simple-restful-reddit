@@ -1,19 +1,21 @@
 {
   "development": {
-    "storage":"../../localdb/reddit.sqlite",
+    "storage":"../../localdb/reddit.dev.sqlite",
     "dialect": "sqlite",
     "define":{
       "freezeTableName": true,
       "timestamps": true
-    }
+    },
+    "logging": false
   },
   "test": {
     "dialect": "sqlite",
-    "storage": ":memory:",
+    "storage": "../../localdb/reddit.test.sqlite",
     "define":{
       "freezeTableName": true,
       "timestamps": true
-    }
+    },
+    "logging": true
   },
   "production": {
     "username": "root",
