@@ -1,6 +1,7 @@
 const { expect } = require('chai');
 const { User, sequelize } = require('../../../orm/models');
 const GenericRepositoy = require('../../../repositories/genericRepository');
+const { EntityNotFoundError } = require('../../../repositories/errors');
 
 const defaultModel = {
   userName: 'test',
@@ -27,6 +28,13 @@ describe('GenericRepository', () => {
     it('should find one model', () => repository.findOne({ userName: defaultModel.userName })
       .then((model) => {
         expect(model).exist;
+      }));
+    it('should return Promise<EntityNotFoundError> when entity is not found', () => repository.findOne({ userName: 'notExists' })
+      .then(() => {
+        expect().fail();
+      })
+      .catch((error) => {
+        expect(error).instanceOf(EntityNotFoundError);
       }));
   });
 

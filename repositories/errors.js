@@ -48,3 +48,12 @@ class IdentityNotFoundError extends Error {
   }
 }
 module.exports.IdentityNotFoundError = IdentityNotFoundError;
+
+class EntityNotFoundError extends Error {
+  constructor() {
+    super('the entity is not found');
+    this.name = 'EntityNotFoundError';
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+module.exports.EntityNotFoundError = EntityNotFoundError;

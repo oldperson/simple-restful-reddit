@@ -1,4 +1,4 @@
-const { IdentityNotFoundError } = require('./errors');
+const { IdentityNotFoundError, EntityNotFoundError } = require('./errors');
 
 /**
  * @class Construct a repository providing generic operations on the resource.
@@ -31,7 +31,13 @@ class GenericRepository {
  * @returns {Promise<object>} Finded model.
  */
   findOne(where) {
-    return this.sequelizeModel.findOne({ where, raw: true });
+    return this.sequelizeModel.findOne({ where, raw: true })
+      .then((model) => {
+        if (!model) {
+          return Promise.reject(new EntityNotFoundError());
+        }
+        return Promise.resolve(model);
+      });
   }
 
   /**
