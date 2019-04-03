@@ -18,6 +18,10 @@ function repositoryErrorHandler(err, req, res, next) {
     status = 409;
   }
 
+  if (err instanceof RepositoryError.EntityNotFoundError) {
+    status = 404;
+  }
+
   if (!status) {
     return next(err);
   }

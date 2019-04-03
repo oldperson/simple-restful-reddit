@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 const repositoryErrorHandler = require('../../../middlewares/repositoryErrorHandler');
-const { ValueAlreadyExistsError, IdentityNotFoundError } = require('../../../repositories/errors');
+const { ValueAlreadyExistsError, IdentityNotFoundError, EntityNotFoundError } = require('../../../repositories/errors');
 
 describe('repositoryErrorHandler', () => {
   it('should response HTTP 409 when handle ValueAlreadyExistsError', () => {
@@ -57,6 +57,25 @@ describe('repositoryErrorHandler', () => {
 
     // Assert
     expect(res.status.args[0][0]).to.equal(409);
+    expect(res.json.args[0][0]).to.exist;
+    expect(next.notCalled).to.be.true;
+  });
+
+  it('should response 404 when handle EntityNotFoundError', () => {
+    // Arrange
+    const error = new EntityNotFoundError();
+    const req = {};
+    const res = {
+      status: sinon.spy(function () { return this; }),
+      json: sinon.spy(function () { return this; }),
+    };
+    const next = sinon.spy();
+
+    // Act
+    repositoryErrorHandler(error, req, res, next);
+
+    // Assert
+    expect(res.status.args[0][0]).to.equal(404);
     expect(res.json.args[0][0]).to.exist;
     expect(next.notCalled).to.be.true;
   });
