@@ -103,3 +103,27 @@ const newAuthToken = {
   },
 };
 module.exports.newAuthToken = newAuthToken;
+
+const newComment = {
+  content: {
+    in: body,
+    exists,
+    not,
+    isEmpty,
+  },
+};
+module.exports.newComment = newComment;
+
+const modifiedVote = {
+  value: {
+    in: body,
+    exists,
+    not,
+    isEmpty,
+    isIn: {
+      errorMessage: 'should be one of [-1, 0, 1]',
+      options: [[-1, 1, 0]],
+    },
+  },
+};
+module.exports.modifiedVote = modifiedVote;

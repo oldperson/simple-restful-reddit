@@ -1,5 +1,7 @@
 const express = require('express');
 const commentRepository = require('../repositories/commentRepository').instance;
+const schemas = require('../validation/schemas');
+const { validate } = require('../middlewares/valiationHandler');
 
 const router = express.Router();
 
@@ -9,7 +11,7 @@ router.get('/:commentId/replies', (req, res, next) => {
     .catch(error => next(error));
 });
 
-router.post('/:commentId/replies', (req, res, next) => {
+router.post('/:commentId/replies', validate(schemas.newComment), (req, res, next) => {
   req.body.parentCommentId = req.params.commentId;
   req.body.authorId = req.user.userId;
   commentRepository.create(req.body)
