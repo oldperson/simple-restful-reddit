@@ -17,10 +17,9 @@ const app = express();
 
 app.listen(port, () => {
   console.log(`listening port ${port}`);
-  console.error(`listening port ${port}`);
 });
 
-// ---------- middlewares-------------
+/* ------------------------------- middlewares ------------------------------ */
 app.use(bodyParser.json());
 app.use(jwt({ secret, credentialsRequired: false })); // if auth token exists, add req.user
 app.use(authorizationHandler.unless({
@@ -31,7 +30,7 @@ app.use(authorizationHandler.unless({
   ],
 }));
 
-// ----------routers------------------
+/* --------------------------------- routers -------------------------------- */
 app.use('/users', usersRouter);
 app.use('/authTokens', authTokensRouter);
 app.use('/communities', communityRouter);
@@ -42,7 +41,7 @@ app.get('/hello/:name', (req, res) => {
   res.status(200).send(`hello ${req.params.name}`);
 });
 
-// -------errorHandlers---------------
+/* ----------------------------- error handlers ----------------------------- */
 app.use(jwtErrorHandler);
 app.use(repositoryErrorHandler);
 
