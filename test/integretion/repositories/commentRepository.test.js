@@ -2,7 +2,9 @@ const { expect } = require('chai');
 const {
   sequelize, User, Community, Post, Comment,
 } = require('../../../orm/models');
-const commentRepository = require('../../../repositories/commentRepository').instance;
+const { CommentRepository } = require('../../../repositories/commentRepository');
+
+const commentRepository = new CommentRepository(Comment);
 
 const defaultUser = {
   userId: 1,

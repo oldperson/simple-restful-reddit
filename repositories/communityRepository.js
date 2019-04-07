@@ -1,5 +1,4 @@
 const GenericRepository = require('./genericRepository');
-const { Community, Sequelize } = require('../orm/models');
 const { ValueAlreadyExistsError } = require('./errors');
 
 /**
@@ -7,19 +6,14 @@ const { ValueAlreadyExistsError } = require('./errors');
  * @param {Object} communityModel Set up model to access resources.
  */
 class CommunityRepository extends GenericRepository {
-  constructor(communityModel) {
-    super(communityModel || Community);
-  }
-
   create(community) {
     return super.create(community)
       .catch((error) => {
-        if (error instanceof Sequelize.UniqueConstraintError) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
           throw new ValueAlreadyExistsError('communityName', community.communityName);
         }
         throw error;
       });
   }
 }
-module.exports = CommunityRepository;
-module.exports.instance = new CommunityRepository();
+module.exports.CommunityRepository = CommunityRepository;

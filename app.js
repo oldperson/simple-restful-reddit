@@ -2,11 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('express-jwt');
 
-const userRepository = require('./repositories/userRepository').instance;
-const commentRepository = require('./repositories/commentRepository').instance;
-const communityRepository = require('./repositories/communityRepository').instance;
-const postRepository = require('./repositories/postRepository').instance;
-const voteRepository = require('./repositories/voteRepository').instance;
+const db = require('./orm/models');
+const { UserRepository } = require('./repositories/userRepository');
+const { CommentRepository } = require('./repositories/commentRepository');
+const { CommunityRepository } = require('./repositories/communityRepository');
+const { PostRepository } = require('./repositories/postRepository');
+const { VoteRepository } = require('./repositories/voteRepository');
 
 const createAuthTokensRouter = require('./routers/authTokens');
 const createUserRouter = require('./routers/users');
@@ -19,6 +20,13 @@ const authorizationHandler = require('./middlewares/authoriztionHandler');
 
 const port = process.env.port || 3000;
 const secret = process.env.JWT_SECRET_KEY;
+
+/* --------------------------- create repositories -------------------------- */
+const userRepository = new UserRepository(db.User);
+const commentRepository = new CommentRepository(db.Comment);
+const communityRepository = new CommunityRepository(db.community);
+const postRepository = new PostRepository(db.Post);
+const voteRepository = new VoteRepository(db.Vote);
 
 /* ----------------------------- create routers ----------------------------- */
 const authTokensRouter = createAuthTokensRouter({ userRepository, secret });

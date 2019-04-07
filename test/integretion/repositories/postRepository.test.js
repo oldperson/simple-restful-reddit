@@ -3,8 +3,10 @@ const { expect } = require('chai');
 const {
   sequelize, User, Community, Post, Vote,
 } = require('../../../orm/models');
-const postRepository = require('../../../repositories/postRepository').instance;
+const { PostRepository } = require('../../../repositories/postRepository');
 const { IdentityNotFoundError } = require('../../../repositories/errors');
+
+const postRepository = new PostRepository(Post);
 
 const defaultUser = {
   userId: 1,

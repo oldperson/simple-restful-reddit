@@ -1,6 +1,5 @@
 
 const { hash, compare } = require('bcrypt');
-const { User, Sequelize } = require('../orm/models');
 const GenericRepository = require('./genericRepository');
 const { UserNotFoundError, IncorrectPasswordError, ValueAlreadyExistsError } = require('./errors');
 
@@ -14,10 +13,6 @@ const rounds = 10;
  * @param {Object} userModel Set up model to access resources.
  */
 class UserRepository extends GenericRepository {
-  constructor(userModel) {
-    super(userModel || User);
-  }
-
   /**
    * Create new user in the resource.
    * @param {string} user.userName
@@ -29,7 +24,7 @@ class UserRepository extends GenericRepository {
     return hash(password, rounds)
       .then(passwordHash => super.create({ userName, email, passwordHash }))
       .catch(((error) => {
-        if (error instanceof Sequelize.UniqueConstraintError) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
           throw new ValueAlreadyExistsError('userName', userName);
         }
         throw error;
@@ -61,6 +56,5 @@ class UserRepository extends GenericRepository {
       });
   }
 }
-// TODO: Add dependency injection or singleton.
-module.exports = UserRepository;
-module.exports.instance = new UserRepository();
+
+module.exports.UserRepository = UserRepository;

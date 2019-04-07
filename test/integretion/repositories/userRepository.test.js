@@ -1,10 +1,10 @@
 const { expect } = require('chai');
 const { sequelize, User } = require('../../../orm/models');
-const UserRepository = require('../../../repositories/userRepository');
+const { UserRepository } = require('../../../repositories/userRepository');
 const { IncorrectPasswordError, UserNotFoundError, ValueAlreadyExistsError } = require('../../../repositories/errors');
 
 describe('UserRepository', () => {
-  const userRepository = UserRepository.instance;
+  const userRepository = new UserRepository(User);
 
   beforeEach(() => sequelize.sync({ force: true })
     .then(() => User.create({

@@ -1,5 +1,4 @@
 const GenericRepository = require('./genericRepository');
-const { Post, Sequelize } = require('../orm/models'); // TODO: get this by Dependency Inejection
 const { IdentityNotFoundError } = require('./errors');
 
 /**
@@ -7,10 +6,6 @@ const { IdentityNotFoundError } = require('./errors');
  * @param {Object} postModel Set up model to access resources.
  */
 class PostRepository extends GenericRepository {
-  constructor(postModel) {
-    super(postModel || Post);
-  }
-
   /**
    * Create a post under in given community.
    * @param {string} communityName
@@ -40,7 +35,7 @@ class PostRepository extends GenericRepository {
       [replacements.postId] = results;
       return replacements;
     }).catch((error) => {
-      if (error instanceof Sequelize.ForeignKeyConstraintError) {
+      if (error.name === 'SequelizeForeignKeyConstraintError') {
         throw new IdentityNotFoundError({ authorId: replacements.authorId });
       }
       throw error;
@@ -92,10 +87,9 @@ class PostRepository extends GenericRepository {
     sqlTrunks.push('LIMIT :limit OFFSET :offset');
     return this.sequelizeModel.sequelize.query(sqlTrunks.join(' '), {
       replacements,
-      type: Sequelize.QueryTypes.SELECT,
+      type: this.sequelizeModel.sequelize.QueryTypes.SELECT,
     });
   }
 }
 
-module.exports = PostRepository;
-module.exports.instance = new PostRepository(); // TODO: construct in app.js
+module.exports.PostRepository = PostRepository;
