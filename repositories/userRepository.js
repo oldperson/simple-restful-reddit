@@ -1,4 +1,4 @@
-
+const _ = require('lodash');
 const { hash, compare } = require('bcrypt');
 const GenericRepository = require('./genericRepository');
 const { UserNotFoundError, IncorrectPasswordError, ValueAlreadyExistsError } = require('./errors');
@@ -23,6 +23,7 @@ class UserRepository extends GenericRepository {
   create({ userName, email, password }) {
     return hash(password, rounds)
       .then(passwordHash => super.create({ userName, email, passwordHash }))
+      .then(created => _.omit(created, 'passwordHash'))
       .catch(((error) => {
         if (error.name === 'SequelizeUniqueConstraintError') {
           throw new ValueAlreadyExistsError('userName', userName);
