@@ -54,9 +54,13 @@ class GenericRepository {
   /**
    * Find models meet the condition.
    * @param {object} where Values for search.
+   * @param {object|Array<string>} attributes Optional, the attributes of returns.
+   * @param {Array<string>} attributes.include Optional, the add additional
+   * attributes to returns.
+   * @param {Array<string>} attributes.exclude Optional, the exclude attributes from returns.
    */
-  findAll(where) {
-    return this.sequelizeModel.findAll({ where, raw: true });
+  findAll(where, attributes) {
+    return this.sequelizeModel.findAll({ where, raw: true, attributes });
   }
 }
 

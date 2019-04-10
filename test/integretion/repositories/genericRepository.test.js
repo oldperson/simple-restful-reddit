@@ -54,5 +54,15 @@ describe('GenericRepository', () => {
         expect(models).to.instanceOf(Array);
         expect(models[0]).to.include(defaultModel);
       }));
+    it('should exclude attributes', () => {
+      const attributes = {
+        exclude: ['passwordHash'],
+      };
+      return repository.findAll({ userName: defaultModel.userName }, { attributes })
+        .then((models) => {
+          expect(models).to.length(1);
+          expect(models[0]).to.not.have.keys('passwordHash');
+        });
+    });
   });
 });
