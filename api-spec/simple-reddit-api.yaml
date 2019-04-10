@@ -45,7 +45,7 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                userName:
                   type: string
                 password:
                   type: string
@@ -90,10 +90,34 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              type: object
+              required:
+               - userName
+               - password
+               - email
+              properties:
+                userName:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      userId:
+                        type: integer
+                      userName:
+                        type: string
+                      email:
+                        type: string
+                  - $ref: '#/components/schemas/timestamp'                             
   /posts:
     get:
       summary: Return list of posts
@@ -146,7 +170,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/post'
+                allOf:
+                  - type: object
+                    properties:
+                      postId:
+                       type: integer
+                  - $ref: '#/components/schemas/post'
+                  - $ref: '#/components/schemas/timestamp'
   '/posts/{post_id}/comments':
     parameters:
       - $ref: '#/components/parameters/postIdParam'
@@ -160,7 +190,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/post'
+                type: array
+                items: 
+                  allOf:
+                    - type: object
+                      properties:
+                        commentId:
+                          type: integer
+                        postId: 
+                          type: integer
+                    - $ref: '#/components/schemas/comment'
+                    - $ref: '#/components/schemas/timestamp'
     post:
       summary: Add new comment for the post.
       tags:
@@ -173,10 +213,27 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/comment'
+              type: object
+              required:
+                - content
+              properties:
+                content:
+                  type: string
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      commentId:
+                        type: integer
+                      postId:
+                        type: integer
+                  - $ref: '#/components/schemas/comment'
+                  - $ref: '#/components/schemas/timestamp'
   '/posts/{post_id}/votes':
     put:
       summary: Vote the post
@@ -193,7 +250,7 @@ paths:
               $ref: '#/components/schemas/vote'
       responses:
         '201':
-          description: Created   
+          description: Created
   /communities:
     post:
       summary: Create a new community.
@@ -209,8 +266,19 @@ paths:
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      communityId:
+                        type: integer
+                  - $ref: '#/components/schemas/community'
+                  - $ref: '#/components/schemas/timestamp'
   '/comminites/{communityname}':
     get:
+      deprecated: true
       summary: Returns a community.
       tags:
         - communities
@@ -222,7 +290,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/community'
+                allOf:
+                  - type: object
+                    properties:
+                      communityId:
+                        type: integer
+                  - $ref: '#/components/schemas/community'
+                  - $ref: '#/components/schemas/timestamp'
   '/communties/{communityname}/posts':
     parameters:
       - $ref: '#/components/parameters/communityNameParam'
@@ -264,7 +338,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/post'
+                type: array
+                items:
+                  allOf:
+                    - type: object
+                      properties:
+                        postId:
+                          type: integer
+                        title:
+                          type: string
+                        authorId:
+                          type: integer
+                        votes:
+                          type: integer
+                        comments:
+                          type: integer
+                    - $ref: '#/components/schemas/timestamp'
     post:
       summary: Add a new post in the community.
       tags:
@@ -276,10 +365,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/post'
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
       responses:
         '201':
           description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                          postId:
+                            type: integer
+                          communityName:
+                            type: string
+                          title:
+                            type: string
+                          content:
+                            type: string
+                          authorId:
+                            type: integer
+                  - $ref: '#/components/schemas/timestamp'
   '/comments/{commentId}/replies':
     parameters:
       - $ref: '#/components/parameters/commentIdParam'
@@ -293,7 +404,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comment'
+                type: array
+                items:
+                  allOf:
+                    - type: object
+                      properties:
+                        commentId:
+                          type: integer
+                        parentCommentId:
+                          type: integer
+                    - $ref: '#/components/schemas/comment'
+                    - $ref: '#/components/schemas/timestamp'
     post:
       summary: Reply the comment.
       tags:
@@ -304,14 +425,25 @@ paths:
         content: 
           application/json:
             schema:
-              $ref: '#/components/schemas/comment'
+              type: object
+              properties:
+                content:
+                  type: string
       responses:
         '201':
-          description: A list of replies,
+          description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/comment'
+                allOf:
+                  - type: object
+                    properties:
+                      commentId:
+                        type: integer
+                      parentCommentId:
+                        type: integer
+                  - $ref: '#/components/schemas/comment'
+                  - $ref: '#/components/schemas/timestamp'
 components:
   schemas:
     User:
@@ -324,10 +456,14 @@ components:
     post:
       type: object
       properties:
-        postId:
+        communityId:
           type: integer
         title:
           type: string
+        content:
+          type: string
+        authorId:
+          type: integer
     community:
       type: object
       properties:
@@ -338,11 +474,28 @@ components:
       properties:
         commentId:
           type: integer
+        authorId:
+          type: integer
+        content:
+          type: string
     vote:
       type: object
       properties:
         value:
           type: integer
+          enum:
+            - 1
+            - 0
+            - -1
+    timestamp:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
   parameters:
     offsetParam:
       name: offset
