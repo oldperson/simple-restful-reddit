@@ -24,7 +24,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
   });
 
   router.get('/:postId/comments', (req, res, next) => {
-    commentRepository.findAll({ postId: req.params.postId })
+    commentRepository.findAll({ postId: req.params.postId }, { exclude: ['parentCommentId'] })
       .then(comments => res.status(200).json(comments))
       .catch(error => next(error));
   });

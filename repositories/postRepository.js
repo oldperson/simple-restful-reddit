@@ -15,11 +15,10 @@ class PostRepository extends GenericRepository {
   createUnder(communityName, post) {
     const { sequelize } = this.sequelizeModel;
     const now = new Date();
-    const replacements = Object.assign({
-      communityName,
-      createdAt: now,
-      updatedAt: now,
-    }, post);
+    const replacements = Object.assign({ }, post);
+    replacements.communityName = communityName;
+    replacements.createdAt = now;
+    replacements.updatedAt = now;
     const sql = `INSERT INTO 
                    Post (communityId, title, content, authorId, createdAt, updatedAt)
                  SELECT communityId, :title, :content, :authorId, :createdAt, updatedAt
@@ -57,9 +56,9 @@ class PostRepository extends GenericRepository {
       sort: 'new',
     }, options);
     const sqlTrunks = [
-      `SELECT Post.postId, Post.title, Post.authorId, Post.updatedAt,
-              (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as Votes,
-              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as Comments
+      `SELECT Post.postId, Post.title, Post.authorId, Post.updatedAt, Post.createdAt,
+              (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
+              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments
          FROM Post
         INNER JOIN Community
            ON Post.communityId = Community.communityId

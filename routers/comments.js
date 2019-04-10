@@ -10,7 +10,7 @@ function create({ commentRepository }) {
   const router = express.Router();
 
   router.get('/:commentId/replies', (req, res, next) => {
-    commentRepository.findAll({ parentCommentId: req.params.commentId })
+    commentRepository.findAll({ parentCommentId: req.params.commentId }, { exclude: ['postId'] })
       .then(comments => res.status(200).json(comments))
       .catch(error => next(error));
   });
