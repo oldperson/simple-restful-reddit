@@ -24,7 +24,7 @@ const secret = process.env.JWT_SECRET_KEY;
 /* --------------------------- create repositories -------------------------- */
 const userRepository = new UserRepository(db.User);
 const commentRepository = new CommentRepository(db.Comment);
-const communityRepository = new CommunityRepository(db.community);
+const communityRepository = new CommunityRepository(db.Community);
 const postRepository = new PostRepository(db.Post);
 const voteRepository = new VoteRepository(db.Vote);
 
