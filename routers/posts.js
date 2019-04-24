@@ -23,6 +23,15 @@ function create({ postRepository, commentRepository, voteRepository }) {
       .catch(error => next(error));
   });
 
+  router.patch('/:postId', (req, res, next) => {
+    postRepository.update(req.body, {
+      postId: req.params.postId,
+      authorId: req.user.userId,
+    })
+      .then(updated => res.status(200).json(updated[0]))
+      .catch(error => next(error));
+  });
+
   router.get('/:postId/comments', (req, res, next) => {
     commentRepository.findAll({ postId: req.params.postId }, { exclude: ['parentCommentId'] })
       .then(comments => res.status(200).json(comments))
