@@ -44,11 +44,17 @@ class GenericRepository {
  * Update properties of models.
  * @param {object} changes Valuse would be changed.
  * @param {*} where Values for find the models should be changed.
- * @returns {Promise<Number>} affectedCount
+ * @returns {Promise<Array<object>} Array of updated model.
  */
   update(changes, where) {
     return this.sequelizeModel.update(changes, { where })
-      .then(([affectedCount]) => affectedCount);
+      .then(([affectedCount]) => {
+        if (affectedCount === 0) {
+          return Promise.reject(new EntityNotFoundError());
+        }
+        return Promise.resolve();
+      })
+      .then(() => this.sequelizeModel.findAll({ where, raw: true }));
   }
 
   /**

@@ -41,9 +41,21 @@ describe('GenericRepository', () => {
   describe('update', () => {
     before(() => User.create(defaultModel));
     after(() => User.truncate());
-    it('should update model', () => repository
+    it('should return Promise<Array<model>> when updated success', () => repository
       .update({ email: 'updated@eamil.com' }, { userName: defaultModel.userName })
-      .then((affectedCount) => { expect(affectedCount).equals(1); }));
+      .then((models) => {
+        expect(models).to.length(1);
+        expect(models[0].email).to.equal('updated@eamil.com');
+      }));
+
+    it('should return Promise<EntityNotFoundError> when no entities found',
+      () => repository.update({ email: 'updated@eamil.com' }, { userName: 'notFound' })
+        .then(() => {
+          expect.fail();
+        })
+        .catch((error) => {
+          expect(error).instanceOf(EntityNotFoundError);
+        }));
   });
 
   describe('findAll', () => {
