@@ -43,6 +43,9 @@ paths:
         content:
           application/json:
             schema:
+              required:
+                - userName
+                - password
               type: object
               properties:
                 userName:
@@ -157,13 +160,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/post'
-  '/posts/{post_id}':
+  '/posts/{postId}':
+    parameters:
+      - $ref: '#/components/parameters/postIdParam'
     get:
       summary: Return content of the post.
       tags:
         - posts
-      parameters:
-        - $ref: '#/components/parameters/postIdParam'
       responses:
         '200':
           description: A list of users
@@ -177,7 +180,36 @@ paths:
                        type: integer
                   - $ref: '#/components/schemas/post'
                   - $ref: '#/components/schemas/timestamp'
-  '/posts/{post_id}/comments':
+    patch:
+      summary: Edit content of the post
+      tags:
+        - posts
+      requestBody:
+        description: edited content
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      postId:
+                        type: integer
+                  - $ref: '#/components/schemas/post'
+                  - $ref: '#/components/schemas/timestamp'
+        
+
+  '/posts/{postId}/comments':
     parameters:
       - $ref: '#/components/parameters/postIdParam'
     get:
@@ -234,7 +266,7 @@ paths:
                         type: integer
                   - $ref: '#/components/schemas/comment'
                   - $ref: '#/components/schemas/timestamp'
-  '/posts/{post_id}/votes':
+  '/posts/{postId}/votes':
     put:
       summary: Vote the post
       parameters:
@@ -276,7 +308,7 @@ paths:
                         type: integer
                   - $ref: '#/components/schemas/community'
                   - $ref: '#/components/schemas/timestamp'
-  '/comminites/{communityname}':
+  '/comminites/{communityName}':
     get:
       deprecated: true
       summary: Returns a community.
@@ -297,7 +329,7 @@ paths:
                         type: integer
                   - $ref: '#/components/schemas/community'
                   - $ref: '#/components/schemas/timestamp'
-  '/communties/{communityname}/posts':
+  '/communties/{communityName}/posts':
     parameters:
       - $ref: '#/components/parameters/communityNameParam'
     get:
@@ -366,6 +398,9 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - title
+                - content
               properties:
                 title:
                   type: string
@@ -466,6 +501,8 @@ components:
           type: integer
     community:
       type: object
+      required:
+        - communityName
       properties:
         communityName:
           type: string
@@ -480,6 +517,8 @@ components:
           type: string
     vote:
       type: object
+      required:
+        - value
       properties:
         value:
           type: integer
@@ -519,14 +558,14 @@ components:
         maximum: 100
         default: 20
     communityNameParam:
-      name: communityname
+      name: communityName
       in: path
       schema:
         type: string
       required: true
       description: Name of the community.
     postIdParam:
-      name: post_id
+      name: postId
       in: path
       schema:
         type: integer
