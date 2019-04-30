@@ -37,7 +37,7 @@ describe('VoteRepository', () => {
     .then(() => Post.create(defaultPost)));
 
   describe('CreateOrUpdate', () => {
-    afterEach(() => Vote.truncate());
+    afterEach(() => Vote.truncateIgnoreFK());
     it('should create new vote', () => voteRepository.createOrUpdate(defaultVote)
       .then((success) => {
         if (sequelize.getDialect() === 'sqlite') {
@@ -55,6 +55,8 @@ describe('VoteRepository', () => {
         .then((success) => {
           if (sequelize.getDialect() === 'sqlite') {
             expect(success).to.be.undefined;
+          } else if (sequelize.getDialect() === 'mysql') {
+            expect(success).to.be.false;
           } else {
             expect(success).to.be.true;
           }

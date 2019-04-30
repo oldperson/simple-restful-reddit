@@ -42,7 +42,7 @@ describe('commentRepository', () => {
     .then(() => Post.create(defaultPost)));
 
   describe('create', () => {
-    afterEach('truncate comment', () => Comment.truncate());
+    afterEach('truncate comment', () => Comment.truncateIgnoreFK());
     it('should work when create a comment', () => commentRepository.create(defaultComment)
       .then((result) => {
         expect(result).to.include(defaultComment);
@@ -57,7 +57,7 @@ describe('commentRepository', () => {
   describe('findAll', () => {
     before('set up comment and reply', () => Comment.create(defaultComment)
       .then(() => Comment.create(defaultReply)));
-    after('truncate comment', () => Comment.truncate());
+    after('truncate comment', () => Comment.truncateIgnoreFK());
     it('should return comments when give postId', () => {
       const where = {
         postId: 1,
@@ -87,7 +87,7 @@ describe('commentRepository', () => {
   describe('', () => {
     before('set up comment and reply', () => Comment.create(defaultComment)
       .then(() => Comment.create(defaultReply)));
-    after('truncate comment', () => Comment.truncate());
+    after('truncate comment', () => Comment.truncateIgnoreFK());
 
     it('', () => {
       const where = {

@@ -1,5 +1,5 @@
 const GenericRepository = require('./genericRepository');
-const { IdentityNotFoundError } = require('./errors');
+const { IdentityNotFoundError, isForeignKeyError } = require('./errors');
 
 /**
  * @class Construct a post repository
@@ -34,7 +34,7 @@ class PostRepository extends GenericRepository {
       [replacements.postId] = results;
       return replacements;
     }).catch((error) => {
-      if (error.name === 'SequelizeForeignKeyConstraintError') {
+      if (isForeignKeyError(error)) {
         throw new IdentityNotFoundError({ authorId: replacements.authorId });
       }
       throw error;

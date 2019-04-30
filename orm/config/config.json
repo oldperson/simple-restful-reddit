@@ -1,7 +1,14 @@
 {
   "development": {
-    "storage":"../../localdb/reddit.dev.sqlite",
-    "dialect": "sqlite",
+    "username": "dev_reddit_app",
+    "password": "aaa246",
+    "database": "dev_reddit",
+    "host": "localhost",
+    "port": "3306",
+    "dialect": "mysql",
+    "dialectOptions":{
+      "multipleStatements": true
+    },
     "define":{
       "freezeTableName": true,
       "timestamps": true
@@ -9,23 +16,35 @@
     "logging": false
   },
   "test": {
-    "dialect": "sqlite",
-    "storage": "../../localdb/reddit.test.sqlite",
+    "username": "test_reddit_app",
+    "password": "aaa246",
+    "database": "test_reddit",
+    "host": "localhost",
+    "port": "3306",
+    "dialect": "mysql",
+    "dialectOptions":{
+      "multipleStatements": true
+    },
     "define":{
       "freezeTableName": true,
       "timestamps": true
     },
-    "logging": true
+    "logging": false
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+    "username": "reddit_app",
+    "password": "aaa246",
+    "database": "reddit",
+    "host": "localhost",
+    "port": "3306",
     "dialect": "mysql",
+    "dialectOptions":{
+      "multipleStatements": true
+    },
     "define":{
       "freezeTableName": true,
       "timestamps": true
-    }
+    },
+    "logging": false
   }
 }

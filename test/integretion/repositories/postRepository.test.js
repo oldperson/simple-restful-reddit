@@ -61,7 +61,7 @@ describe('postRepository', () => {
       .then(() => Community.create(defaultCommunity)));
 
   describe('creaeteUnder', () => {
-    afterEach(() => postRepository.sequelizeModel.truncate({ truncate: true }));
+    afterEach(() => postRepository.sequelizeModel.truncateIgnoreFK());
     it('should work when community and post data are provided', () => {
       const post = {
         title: 'new post',
@@ -103,7 +103,7 @@ describe('postRepository', () => {
   describe('findUnder', () => {
     before(() => Post.bulkCreate(defaultPosts)
       .then(() => Vote.upsert(defaultVote)));
-    after(() => Vote.truncate({ truncate: true }));
+    after(() => Vote.truncateIgnoreFK());
     it('should use default options when options are undifined', () => postRepository.findUnder(defaultCommunity.communityName)
       .then((results) => {
         expect(results).to.exist;

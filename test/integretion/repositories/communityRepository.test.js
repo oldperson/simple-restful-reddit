@@ -6,11 +6,11 @@ const { ValueAlreadyExistsError } = require('../../../repositories/errors');
 const communityRepository = new CommunityRepository(Community);
 describe('CommunityRepository', () => {
   before(() => sequelize.sync({ force: true }));
-  describe('creat', () => {
+  describe('create', () => {
     const defaultCommunity = {
       communityName: 'TestCom',
     };
-    beforeEach(() => Community.truncate().then(() => Community.create(defaultCommunity)));
+    beforeEach(() => Community.truncateIgnoreFK().then(() => Community.create(defaultCommunity)));
 
     it('should return Promise<ValueAlreadyExistsError> when communityName is already exists',
       () => communityRepository.create(defaultCommunity)

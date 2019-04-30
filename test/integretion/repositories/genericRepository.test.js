@@ -14,7 +14,7 @@ describe('GenericRepository', () => {
   before(() => sequelize.sync({ force: true }));
 
   describe('create', () => {
-    afterEach(() => User.truncate());
+    afterEach(() => User.truncateIgnoreFK());
     it('should create new model',
       () => repository.create(defaultModel)
         .then((model) => {
@@ -24,7 +24,7 @@ describe('GenericRepository', () => {
 
   describe('findOne', () => {
     before(() => User.create(defaultModel));
-    after(() => User.truncate());
+    after(() => User.truncateIgnoreFK());
     it('should find one model', () => repository.findOne({ userName: defaultModel.userName })
       .then((model) => {
         expect(model).exist;
@@ -40,7 +40,7 @@ describe('GenericRepository', () => {
 
   describe('update', () => {
     before(() => User.create(defaultModel));
-    after(() => User.truncate());
+    after(() => User.truncateIgnoreFK());
     it('should return Promise<Array<model>> when updated success', () => repository
       .update({ email: 'updated@eamil.com' }, { userName: defaultModel.userName })
       .then((models) => {
@@ -60,7 +60,7 @@ describe('GenericRepository', () => {
 
   describe('findAll', () => {
     before(() => User.create(defaultModel));
-    after(() => User.truncate());
+    after(() => User.truncateIgnoreFK());
     it('should find all models', () => repository.findAll({ userName: 'test' })
       .then((models) => {
         expect(models).to.instanceOf(Array);

@@ -57,3 +57,15 @@ class EntityNotFoundError extends Error {
   }
 }
 module.exports.EntityNotFoundError = EntityNotFoundError;
+
+/**
+ * Return true if the error is ForeignKeyError,
+ * else return false.
+ * @param {Error} error
+ * @returns {boolean}
+ */
+function isForeignKeyError(error) {
+  return (error.name === 'SequelizeForeignKeyConstraintError')
+  || (error.original && error.original.code === 'ER_NO_REFERENCED_ROW'); // deal with mysql Fk error
+}
+module.exports.isForeignKeyError = isForeignKeyError;

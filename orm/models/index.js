@@ -43,6 +43,24 @@ Object.keys(db).forEach((modelName) => {
   }
 });
 
+/**
+ * Shutdown the foreign key checks when truncate table,
+ * after table truncated, restore the foreign key checks.
+ * @returns {Promise}
+ */
+function truncateIgnoreFK() {
+  if (this.sequelize.getDialect() === 'mysql') {
+    const tableName = this.getTableName().tableName || this.getTableName();
+    const sql = `SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE ${tableName}; SET FOREIGN_KEY_CHECKS = 1;`;
+    return this.sequelize.query(sql);
+  }
+  return this.truncate();
+}
+// append truncateIgnoreFK()
+Object.keys(db).forEach((modelName) => {
+  db[modelName].truncateIgnoreFK = truncateIgnoreFK;
+});
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
