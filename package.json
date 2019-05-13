@@ -4,7 +4,7 @@
   "description": "a simple reddit-like restful web service ",
   "main": "index.js",
   "scripts": {
-    "prod": "cross-env NODE_ENV=production JWT_SECRET_KEY=thisissecrtkey PORT=3001 nodemon app.js",
+    "prod": "cross-env NODE_ENV=production JWT_SECRET_KEY=thisissecrtkey PORT=3001 REDDIT_DB_CONNECTION=mysql://reddit_app:aaa246@localhost:3306/reddit nodemon app.js",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/unit/*.test.js",
     "test-integration-repositories": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/integretion/repositories/*.test.js",
     "test-unit-formats": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/unit/formats/*.test.js",

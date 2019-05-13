@@ -32,11 +32,7 @@
     "logging": false
   },
   "production": {
-    "username": "reddit_app",
-    "password": "aaa246",
-    "database": "reddit",
-    "host": "localhost",
-    "port": "3306",
+    "use_env_variable": "REDDIT_DB_CONNECTION",
     "dialect": "mysql",
     "dialectOptions":{
       "multipleStatements": true
