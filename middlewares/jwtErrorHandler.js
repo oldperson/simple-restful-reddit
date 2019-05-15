@@ -1,10 +1,5 @@
+const { UnauthorizedError } = require('express-jwt');
 const { createErrorBody } = require('../formats/responseBody');
-
-const unauthorizedCodes = {
-  invalid_token: true,
-  credentials_bad_scheme: true,
-  credentials_bad_format: true,
-};
 
 /**
  * Return a express middleware that handle errors of JWT authentication.
@@ -17,8 +12,9 @@ const unauthorizedCodes = {
  * @returns {function}
  */
 function jwtErrorHandler(err, req, res, next) {
-  if (err.code && unauthorizedCodes[err.code]) {
-    return res.status(401).json(createErrorBody(err));
+  if (err instanceof UnauthorizedError) {
+    const message = `Token authentication fail. [${err.code}] ${err.message}`;
+    return res.status(401).json(createErrorBody(message));
   }
   return next(err);
 }

@@ -1,5 +1,6 @@
 const { expect } = require('chai');
 const sinon = require('sinon');
+const { UnauthorizedError } = require('express-jwt');
 const jwtErrorHandler = require('../../../middlewares/jwtErrorHandler');
 
 describe('jwtErrorHandler', () => {
@@ -17,8 +18,7 @@ describe('jwtErrorHandler', () => {
     it(`should response HTTP 401 when occur authentication error: ${code}`, () => {
       // Arrage
       const message = 'authentication fail';
-      const err = new Error(message);
-      err.code = code;
+      const err = new UnauthorizedError(code, { message });
       const res = {
         status: sinon.spy(function () { return this; }),
         json: sinon.spy(function () { return this; }),
@@ -30,8 +30,9 @@ describe('jwtErrorHandler', () => {
       jwtErrorHandler(err, req, res, next);
 
       // Assert
+      const expectedMessage = `Token authentication fail. [${code}] ${message}`;
       expect(res.status.args[0][0]).to.equal(401);
-      expect(res.json.args[0][0]).to.eql({ message });
+      expect(res.json.args[0][0]).to.eql({ message: expectedMessage });
       expect(next.notCalled).to.be.true;
     });
   });
