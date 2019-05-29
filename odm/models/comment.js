@@ -8,9 +8,9 @@ module.exports = {
   //   allowNull: false,
   // },
   schema: {
+    // The post which this comment belongs to. If record is a reply, postId would be null
     postId: {
       type: SchemaTypes.ObjectId,
-      required: true,
     },
     authorId: {
       type: SchemaTypes.ObjectId,
@@ -25,4 +25,16 @@ module.exports = {
       required: true,
     },
   },
+  watch: [
+    {
+      name: 'change',
+      listener(db, event) {
+        const inserted = event.fullDocument;
+        if (event.operationType === 'insert') {
+          db.Post.updateOne({ _id: inserted.postId },
+            { $inc: { comments: 1 } }).exec();
+        }
+      },
+    },
+  ],
 };

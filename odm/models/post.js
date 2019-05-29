@@ -12,6 +12,10 @@ module.exports = {
       type: SchemaTypes.ObjectId,
       required: true,
     },
+    communityName: {
+      type: String,
+      required: true,
+    },
     title: {
       type: String,
       maxlength: 20,
@@ -24,6 +28,14 @@ module.exports = {
     authorId: {
       type: SchemaTypes.ObjectId,
       required: true,
+    },
+    votes: {
+      type: Number,
+      default: 0,
+    },
+    comments: {
+      type: Number,
+      default: 0,
     },
   },
 };

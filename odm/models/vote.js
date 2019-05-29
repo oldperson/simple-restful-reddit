@@ -34,4 +34,16 @@ module.exports = {
       },
     },
   ],
+  watch: [
+    {
+      name: 'change',
+      listener(db, event) {
+        const doc = event.fullDocument;
+        if (event.operationType === 'insert') {
+          db.Post.updateOne({ _id: doc.postId }, { $inc: { votes: doc.value } }).exec();
+        }
+        // TODO: if event.operationType === 'update', sync the vote value to Post.votes
+      },
+    },
+  ],
 };
