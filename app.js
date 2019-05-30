@@ -2,12 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('express-jwt');
 
-const db = require('./orm/models');
-const { UserRepository } = require('./repositories/userRepository');
-const { CommentRepository } = require('./repositories/commentRepository');
-const { CommunityRepository } = require('./repositories/communityRepository');
-const { PostRepository } = require('./repositories/postRepository');
-const { VoteRepository } = require('./repositories/voteRepository');
+const db = require('./odm/models');
+const { UserRepository } = require('./mongo-repositories/userRepository');
+const { CommentRepository } = require('./mongo-repositories/commentRepository');
+const { CommunityRepository } = require('./mongo-repositories/communityRepository');
+const { PostRepository } = require('./mongo-repositories/postRepository');
+const { VoteRepository } = require('./mongo-repositories/voteRepository');
 
 const createAuthTokensRouter = require('./routers/authTokens');
 const createUserRouter = require('./routers/users');
