@@ -26,10 +26,11 @@ function toObjectId(value, field) {
  * @param {*} next
  * @returns {function}
  */
-// eslint-disable-next-line no-unused-vars
 function objectIdWrapper(req, res, next) {
   const params = _.mapValues(req.params, toObjectId);
+  const body = _.mapValues(req.body, toObjectId);
   req.params = params;
+  req.body = body;
   return next();
 }
 

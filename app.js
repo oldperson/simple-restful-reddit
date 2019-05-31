@@ -17,6 +17,7 @@ const createCommentRouter = require('./routers/comments');
 const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
 const repositoryErrorHandler = require('./middlewares/repositoryErrorHandler');
 const authorizationHandler = require('./middlewares/authoriztionHandler');
+const objectIdWrapper = require('./middlewares/objectIdWrapper');
 
 const port = process.env.PORT || 3000;
 const secret = process.env.JWT_SECRET_KEY;
@@ -51,6 +52,7 @@ app.use(authorizationHandler.unless({
     { url: '/authTokens', methods: ['POST'] },
   ],
 }));
+app.use(objectIdWrapper);
 
 /* ---------------------------- register routers ---------------------------- */
 app.use('/users', usersRouter);
