@@ -15,7 +15,7 @@ class VoteRepository extends GenericRepository {
    */
   createOrUpdate(vote) {
     const conditions = {
-      postId: vote.PostId,
+      postId: vote.postId,
       userId: vote.userId,
     };
     return this.mongooseModel
