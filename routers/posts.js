@@ -13,7 +13,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
   const router = express.Router();
 
   router.get('/:postId', (req, res, next) => {
-    postRepository.findOne({ postId: req.params.postId })
+    postRepository.findById(req.params.postId)
       .then((post) => {
         if (!post) {
           return res.status(404);
@@ -24,10 +24,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
   });
 
   router.patch('/:postId', (req, res, next) => {
-    postRepository.update(req.body, {
-      postId: req.params.postId,
-      authorId: req.user.userId,
-    })
+    postRepository.update(req.body, req.params.postId)
       .then(updated => res.status(200).json(updated[0]))
       .catch(error => next(error));
   });
@@ -50,7 +47,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
     req.body.userId = req.user.userId;
     req.body.postId = req.params.postId;
     voteRepository.createOrUpdate(req.body)
-      .then(() => res.send(200))
+      .then(voted => res.status(200).json(voted))
       .catch(error => next(error));
   });
 
