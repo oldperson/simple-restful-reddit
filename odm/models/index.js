@@ -23,6 +23,11 @@ const generalSchemaOptions = {
   timestamps: true, // add createAt, updatedAt
   toJSON: {
     virtuals: true, // add virtual fields in JSON
+    transform: (doc, ret) => {
+      delete ret._id; 
+      delete ret.__v;
+      return ret;
+    },
   },
 };
 
