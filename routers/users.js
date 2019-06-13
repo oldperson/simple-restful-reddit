@@ -17,10 +17,6 @@ function create({ userRepository }) {
       .catch(error => next(error));
   });
 
-  // find posts of user
-  router.get('/:name/posts', (req, res) => {
-    res.send(`posts of name: ${req.params.name}`);
-  });
   return router;
 }
 module.exports = create;
