@@ -24,8 +24,8 @@ function create({ postRepository, commentRepository, voteRepository }) {
   });
 
   router.patch('/:postId', (req, res, next) => {
-    postRepository.update(req.body, req.params.postId)
-      .then(updated => res.status(200).json(updated[0]))
+    postRepository.findByIdAndUpdate(req.body, req.params.postId)
+      .then(updated => res.status(200).json(updated))
       .catch(error => next(error));
   });
 
