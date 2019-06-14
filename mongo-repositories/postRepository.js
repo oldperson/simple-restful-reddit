@@ -37,40 +37,58 @@ class PostRepository extends GenericRepository {
   }
 
   /**
-   * @param {string} communityName
+   * @param {string} communityName Find the posts of the community, if communityName is null,
+   *  find posts without considering the community.
    * @param {object} [options={}]
    * @param {number} [options.offset=0]
    * @param {number} [options.limit=20]
    * @param {string} [options.sort=new]
    * @param {string} [options.search]
+   * @returns {Promise}
    */
   findUnder(communityName, options = {}) {
-    const conditions = { communityName };
+    const conditions = getMongooseQueryConditions(options);
     const projection = null;
-    const queryOptions = {
-      skip: 0,
-      limit: 20,
-      sort: { updatedAt: -1 },
-    };
-
-    if (options.offset) {
-      queryOptions.skip = options.offset;
-    }
-
-    if (options.limit) {
-      queryOptions.limit = options.limit;
-    }
-
-    if (options.sort) {
-      queryOptions.sort = sortToOption[options.sort];
-    }
-
-    if (options.search) {
-      Object.assign(conditions, { title: new RegExp(options.search) });
+    const queryOptions = getMongooseQueryOptions(options);
+    
+    if (communityName != null) { 
+      conditions.communityName = communityName;
     }
 
     return this.mongooseModel.find(conditions, projection, queryOptions).exec();
   }
+}
+
+function getMongooseQueryConditions(options) {
+  const conditions = {};
+
+  if (options.search) {
+    conditions.title = new RegExp(options.search);
+  }
+
+  return conditions;
+}
+
+function getMongooseQueryOptions(options) {
+  const queryOptions = {
+    skip: 0,
+    limit: 20,
+    sort: { updatedAt: -1 },
+  };
+  
+  if (options.offset) {
+    queryOptions.skip = options.offset;
+  }
+
+  if (options.limit) {
+    queryOptions.limit = options.limit;
+  }
+
+  if (options.sort) {
+    queryOptions.sort = sortToOption[options.sort];
+  }
+
+  return queryOptions;
 }
 
 module.exports.PostRepository = PostRepository;

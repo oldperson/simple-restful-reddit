@@ -1,5 +1,5 @@
 const express = require('express');
-const scemas = require('../validation/schemas');
+const schemas = require('../validation/schemas');
 const { validate } = require('../middlewares/valiationHandler');
 
 /**
@@ -11,6 +11,12 @@ const { validate } = require('../middlewares/valiationHandler');
  */
 function create({ postRepository, commentRepository, voteRepository }) {
   const router = express.Router();
+
+  router.get('/', validate(schemas.queryOptions), (req, res, next) => {
+    return postRepository.findUnder(null, req.query)
+    .then((posts) => res.status(200).json(posts))
+    .catch((error) => next(error));
+  });
 
   router.get('/:postId', (req, res, next) => {
     postRepository.findById(req.params.postId)
@@ -35,7 +41,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
       .catch(error => next(error));
   });
 
-  router.post('/:postId/comments', validate(scemas.newComment), (req, res, next) => {
+  router.post('/:postId/comments', validate(schemas.newComment), (req, res, next) => {
     req.body.authorId = req.user.userId;
     req.body.postId = req.params.postId;
     commentRepository.create(req.body)
@@ -43,7 +49,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
       .catch(error => next(error));
   });
 
-  router.put('/:postId/votes', validate(scemas.modifiedVote), (req, res, next) => {
+  router.put('/:postId/votes', validate(schemas.modifiedVote), (req, res, next) => {
     req.body.userId = req.user.userId;
     req.body.postId = req.params.postId;
     voteRepository.createOrUpdate(req.body)

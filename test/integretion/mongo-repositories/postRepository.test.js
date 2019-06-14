@@ -174,5 +174,12 @@ describe('postRepository', () => {
           expect(posts[2].postId.equals(defaultPosts[0].postId));
         });
     });
+
+    it('should find posts when communityName is null', () => {
+      return postRepository.findUnder(null)
+      .then((posts) => {
+        expect(posts).to.lengthOf(3);
+      });
+    });
   });
 });
