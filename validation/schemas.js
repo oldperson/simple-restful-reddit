@@ -16,6 +16,7 @@ const queryOptions = {
     isInt: {
       errorMessage: 'should be an integer',
     },
+    toInt: true,
   },
   limit: {
     in: query,
@@ -24,6 +25,7 @@ const queryOptions = {
       options: { max: 30 },
       errorMessage: 'should be an integer',
     },
+    toInt: true,
   },
   sort: {
     in: query,
