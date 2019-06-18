@@ -1,5 +1,5 @@
 const GenericRepository = require('./genericRepository');
-const { IdentityNotFoundError } = require('../repositories/errors');
+const { IdentityNotFoundError } = require('./errors');
 
 const sortToOption = Object.freeze({
   new: { updatedAt: -1 },

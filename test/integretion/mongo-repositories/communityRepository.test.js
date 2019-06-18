@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { mongoose, Community } = require('../../../odm/models');
 const { CommunityRepository } = require('../../../mongo-repositories/communityRepository');
-const { ValueAlreadyExistsError } = require('../../../repositories/errors');
+const { ValueAlreadyExistsError } = require('../../../mongo-repositories/errors');
 
 const communityRepository = new CommunityRepository(Community);
 describe('CommunityRepository', () => {

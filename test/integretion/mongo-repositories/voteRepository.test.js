@@ -3,7 +3,7 @@ const {
   mongoose, User, Community, Post, Vote,
 } = require('../../../odm/models');
 const { VoteRepository } = require('../../../mongo-repositories/voteRepository');
-const { IdentityNotFoundError } = require('../../../repositories/errors');
+const { IdentityNotFoundError } = require('../../../mongo-repositories/errors');
 
 const voteRepository = new VoteRepository(Vote);
 

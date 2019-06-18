@@ -2,7 +2,7 @@
 const { expect } = require('chai');
 const { User, mongoose } = require('../../../odm/models/index.js');
 const GenericRepositoy = require('../../../mongo-repositories/genericRepository');
-const { EntityNotFoundError } = require('../../../repositories/errors');
+const { EntityNotFoundError } = require('../../../mongo-repositories/errors');
 
 const { ObjectId } = mongoose.Types;
 

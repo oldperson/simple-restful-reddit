@@ -1,4 +1,4 @@
-const { EntityNotFoundError } = require('../repositories/errors');
+const { EntityNotFoundError } = require('./errors');
 
 /**
  * Convert included/exciuded attrubutes to mongoose select string.

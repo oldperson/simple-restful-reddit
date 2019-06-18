@@ -1,7 +1,7 @@
 const { expect } = require('chai');
 const { mongoose, User } = require('../../../odm/models');
 const { UserRepository } = require('../../../mongo-repositories/userRepository');
-const { IncorrectPasswordError, UserNotFoundError, ValueAlreadyExistsError } = require('../../../repositories/errors');
+const { IncorrectPasswordError, UserNotFoundError, ValueAlreadyExistsError } = require('../../../mongo-repositories/errors');
 
 describe('UserRepository', () => {
   const userRepository = new UserRepository(User);

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { hash, compare } = require('bcrypt');
 const GenericRepository = require('./genericRepository');
-const { UserNotFoundError, IncorrectPasswordError, ValueAlreadyExistsError } = require('../repositories/errors');
+const { UserNotFoundError, IncorrectPasswordError, ValueAlreadyExistsError } = require('./errors');
 
 /**
  * The cost factor controls how many calculations to hash the password,

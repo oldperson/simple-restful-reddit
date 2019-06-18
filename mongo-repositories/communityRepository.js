@@ -1,5 +1,5 @@
 const GenericRepository = require('./genericRepository');
-const { ValueAlreadyExistsError } = require('../repositories/errors');
+const { ValueAlreadyExistsError } = require('./errors');
 
 /**
  * @class Construct a community repository
