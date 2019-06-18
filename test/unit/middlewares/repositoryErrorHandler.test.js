@@ -1,7 +1,7 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
 const repositoryErrorHandler = require('../../../middlewares/repositoryErrorHandler');
-const { ValueAlreadyExistsError, IdentityNotFoundError, EntityNotFoundError } = require('../../../repositories/errors');
+const { ValueAlreadyExistsError, IdentityNotFoundError, EntityNotFoundError } = require('../../../mongo-repositories/errors');
 
 describe('repositoryErrorHandler', () => {
   it('should response HTTP 409 when handle ValueAlreadyExistsError', () => {

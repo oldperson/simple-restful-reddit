@@ -1,4 +1,4 @@
-const RepositoryError = require('../repositories/errors');
+const RepositoryError = require('../mongo-repositories/errors');
 const { createErrorBody } = require('../formats/responseBody');
 /**
  * Express middleware handles the repository errors,
