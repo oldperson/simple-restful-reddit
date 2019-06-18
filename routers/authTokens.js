@@ -2,7 +2,7 @@
 const { promisify } = require('util');
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const { UserNotFoundError, IncorrectPasswordError } = require('../repositories/errors');
+const { UserNotFoundError, IncorrectPasswordError } = require('../mongo-repositories/errors');
 const { createErrorBody } = require('../formats/responseBody');
 const { validate } = require('../middlewares/valiationHandler');
 const schemas = require('../validation/schemas');
