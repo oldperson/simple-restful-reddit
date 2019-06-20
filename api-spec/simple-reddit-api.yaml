@@ -1,38 +1,30 @@
 openapi: 3.0.0
 info:
   title: Simple RESTful Reddit
-  description: >-
-    Optional multiline or single-line description in
-    [CommonMark](http://commonmark.org/help/) or HTML.
-  version: 0.1.9
+  description: |+
+    Both guest and authenticated can access or manipulate the resource of Reddit by these RESTful APIs.
+    However, some APIs need authentication / authorization, you have to register (POST /users) first,
+    then create auth token (POST /authTokens), 
+    finally, add "Bearer [your auth token]" to the Authorization header of HTTP request 
+    (If you use this page, swagger UI, you can click the Authorize button and enter your auth token).
+    The source code is on GitHub [https://github.com/oldperson/other/tree/mongodb](https://github.com/oldperson/other/tree/mongodb)
+  version: 2.0.0
 servers:
-  - url: 'http://api.example.com/v1'
-    description: 'Optional server description, e.g. Main (production) server'
-  - url: 'http://staging-api.example.com'
-    description: 'Optional server description, e.g. Internal staging server for testing'
+    - url: 'https://simplerestfulreddit.ddns.net/v2'
+    - url: 'http://simplerestfulreddit.ddns.net/v2'
 tags:
   - name: users
-    description: Everything about your Pets
-    externalDocs:
-      url: 'http://docs.my-api.com/pet-operations.htm'
+    description: Resources about users, include register
   - name: posts
-    description: Everything about your Pets
-    externalDocs:
-      url: 'http://docs.my-api.com/pet-operations.htm'
+    description: Resources about posts
   - name: communities
-    description: Everything about your Pets
-    externalDocs:
-      url: 'http://docs.my-api.com/pet-operations.htm'
+    description: Resources about communities
   - name: comments
-    description: Everything about comments
-    externalDocs:
-      url: 'http://docs.my-api.com/pet-operations.htm'
+    description: Resources about comments
   - name: authentication/authorization
-    description: Everything about your Pets
-    externalDocs:
-      url: 'http://docs.my-api.com/pet-operations.htm'
+    description: Resources about authentication and authorization
 paths:
-  /auth/token:
+  /authTokens:
     post:
       summary: Create a token for authentication and authorization.
       tags:
@@ -62,10 +54,14 @@ paths:
                 properties:
                   token:
                     type: string
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
   '/users/{username}':
     get:
+      deprecated: true
       tags:
         - users
+      security: []
       summary: Returns the user.
       description: Optional extended description in CommonMark or HTML.
       parameters:
@@ -115,18 +111,22 @@ paths:
                   - type: object
                     properties:
                       userId:
-                        type: integer
+                        type: string
                       userName:
                         type: string
                       email:
                         type: string
-                  - $ref: '#/components/schemas/timestamp'                             
+                  - $ref: '#/components/schemas/timestamp'
+        '409':
+          $ref: '#/components/responses/409UserNameAlreadyExists'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
   /posts:
     get:
-      summary: Return list of posts
+      summary: List posts
       tags:
         - posts
-      parameters:
+      parameters: 
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
         - in: query
@@ -147,6 +147,7 @@ paths:
           schema:
             type: string
         - in: query
+          deprecated: true
           name: popular
           description: >-
             If true returns posts for popular, else returns posts user
@@ -155,16 +156,22 @@ paths:
             type: boolean
       responses:
         '200':
-          description: A list of users
+          description: A list of posts
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/post'
+                type: array
+                items:
+                  allOf:
+                    - $ref: '#/components/schemas/post'
+                    - $ref: '#/components/schemas/timestamp'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'                    
   '/posts/{postId}':
     parameters:
       - $ref: '#/components/parameters/postIdParam'
     get:
-      summary: Return content of the post.
+      summary: Find content of the post
       tags:
         - posts
       responses:
@@ -174,13 +181,15 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - type: object
-                    properties:
-                      postId:
-                       type: integer
                   - $ref: '#/components/schemas/post'
                   - $ref: '#/components/schemas/timestamp'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
     patch:
+      security: 
+        - bearerAuth: []
       summary: Edit content of the post
       tags:
         - posts
@@ -201,19 +210,19 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - type: object
-                    properties:
-                      postId:
-                        type: integer
                   - $ref: '#/components/schemas/post'
                   - $ref: '#/components/schemas/timestamp'
-        
-
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
   '/posts/{postId}/comments':
     parameters:
       - $ref: '#/components/parameters/postIdParam'
     get:
-      summary: Returns comments of the post.
+      summary: Find comments of the post
       tags:
         - posts
       responses:
@@ -228,17 +237,21 @@ paths:
                     - type: object
                       properties:
                         commentId:
-                          type: integer
+                          type: string
                         postId: 
-                          type: integer
+                          type: string
                     - $ref: '#/components/schemas/comment'
                     - $ref: '#/components/schemas/timestamp'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed' 
     post:
-      summary: Add new comment for the post.
+      summary: Add new comment for the post
       tags:
         - posts
-      security: 
-      - bearerAuth: []
+      security:
+        - bearerAuth: []
       requestBody:
         description: comment
         required: true
@@ -261,14 +274,22 @@ paths:
                   - type: object
                     properties:
                       commentId:
-                        type: integer
+                        type: string
                       postId:
-                        type: integer
+                        type: string
                   - $ref: '#/components/schemas/comment'
                   - $ref: '#/components/schemas/timestamp'
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
   '/posts/{postId}/votes':
     put:
       summary: Vote the post
+      security:
+        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/postIdParam'
       tags:
@@ -281,11 +302,35 @@ paths:
             schema:
               $ref: '#/components/schemas/vote'
       responses:
-        '201':
-          description: Created
+        '200':
+          description: Created or updated
+          content:
+            applictation/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      postId:
+                        type: string
+                      userId:
+                        type: string
+                      value:
+                        type: string
+                      voteId:
+                        type: string
+                  - $ref: '#/components/schemas/timestamp'
+                
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
   /communities:
     post:
-      summary: Create a new community.
+      summary: Create a new community
+      security: 
+        - bearerAuth: []
       tags:
         - communities
       requestBody:
@@ -305,9 +350,13 @@ paths:
                   - type: object
                     properties:
                       communityId:
-                        type: integer
+                        type: string
                   - $ref: '#/components/schemas/community'
                   - $ref: '#/components/schemas/timestamp'
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
   '/comminites/{communityName}':
     get:
       deprecated: true
@@ -329,11 +378,11 @@ paths:
                         type: integer
                   - $ref: '#/components/schemas/community'
                   - $ref: '#/components/schemas/timestamp'
-  '/communties/{communityName}/posts':
+  '/communities/{communityName}/posts':
     parameters:
       - $ref: '#/components/parameters/communityNameParam'
     get:
-      summary: Returns posts of the community.
+      summary: Find posts of the community
       tags:
         - posts
         - communities
@@ -373,21 +422,16 @@ paths:
                 type: array
                 items:
                   allOf:
-                    - type: object
-                      properties:
-                        postId:
-                          type: integer
-                        title:
-                          type: string
-                        authorId:
-                          type: integer
-                        votes:
-                          type: integer
-                        comments:
-                          type: integer
+                    - $ref: '#/components/schemas/post'
                     - $ref: '#/components/schemas/timestamp'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
     post:
-      summary: Add a new post in the community.
+      summary: Add a new post in the community
+      security:
+        - bearerAuth: []
       tags:
         - communities
         - posts
@@ -412,25 +456,20 @@ paths:
           content:
             application/json:
               schema:
-                allOf:
-                  - type: object
-                    properties:
-                          postId:
-                            type: integer
-                          communityName:
-                            type: string
-                          title:
-                            type: string
-                          content:
-                            type: string
-                          authorId:
-                            type: integer
-                  - $ref: '#/components/schemas/timestamp'
+                  allOf:
+                    - $ref: '#/components/schemas/post'
+                    - $ref: '#/components/schemas/timestamp'
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed' 
   '/comments/{commentId}/replies':
     parameters:
       - $ref: '#/components/parameters/commentIdParam'
     get:
-      summary: Return all replies of the comment.
+      summary: Find all replies of the comment
       tags:
         - comments
       responses:
@@ -445,13 +484,19 @@ paths:
                     - type: object
                       properties:
                         commentId:
-                          type: integer
+                          type: string
                         parentCommentId:
-                          type: integer
+                          type: string
                     - $ref: '#/components/schemas/comment'
                     - $ref: '#/components/schemas/timestamp'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'
     post:
       summary: Reply the comment.
+      security:
+        - bearerAuth: []
       tags:
         - comments
       requestBody:
@@ -479,6 +524,12 @@ paths:
                         type: integer
                   - $ref: '#/components/schemas/comment'
                   - $ref: '#/components/schemas/timestamp'
+        '401':
+          $ref: '#/components/responses/401AuthenticationFailed'
+        '404':
+          $ref: '#/components/responses/404ResourceNotFound'
+        '422':
+          $ref: '#/components/responses/422ValidationFailed'                  
 components:
   schemas:
     User:
@@ -491,13 +542,21 @@ components:
     post:
       type: object
       properties:
-        communityId:
-          type: integer
+        postId:
+          type: string
         title:
           type: string
         content:
           type: string
+        communityName:
+          type: string
+        communityId:
+          type: string
         authorId:
+          type: string
+        comments:
+          type: integer
+        votes:
           type: integer
     community:
       type: object
@@ -510,9 +569,9 @@ components:
       type: object
       properties:
         commentId:
-          type: integer
+          type: string
         authorId:
-          type: integer
+          type: string
         content:
           type: string
     vote:
@@ -568,7 +627,7 @@ components:
       name: postId
       in: path
       schema:
-        type: integer
+        type: string
       required: true
       description: ID of the post.
     commentIdParam:
@@ -576,10 +635,70 @@ components:
       in: path
       required: true
       schema:
-       type: integer
+       type: string
       description: ID of the comment
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    "409UserNameAlreadyExists":
+      description: "Fail to create user, because the user name already exists"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    "422ValidationFailed":
+      description: "Validation failed"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+              details:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    location:
+                      type: string
+                    param:
+                      type: string
+                    value:
+                      type: string
+                    msg:
+                     type: string
+    "401AuthenticationFailed":
+      description: "Authentication Failed"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+        
+    "403Unauthorized":
+      description: "Authentication failed"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+    "404ResourceNotFound":
+      description: "The resource is not found"
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
