@@ -12,11 +12,9 @@ const { validate } = require('../middlewares/valiationHandler');
 function create({ postRepository, commentRepository, voteRepository }) {
   const router = express.Router();
 
-  router.get('/', validate(schemas.queryOptions), (req, res, next) => {
-    return postRepository.findUnder(null, req.query)
-    .then((posts) => res.status(200).json(posts))
-    .catch((error) => next(error));
-  });
+  router.get('/', validate(schemas.queryOptions), (req, res, next) => postRepository.findUnder(null, req.query)
+    .then(posts => res.status(200).json(posts))
+    .catch(error => next(error)));
 
   router.get('/:postId', (req, res, next) => {
     postRepository.findById(req.params.postId)
