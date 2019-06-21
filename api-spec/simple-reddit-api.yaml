@@ -7,7 +7,7 @@ info:
     then create auth token (POST /authTokens), 
     finally, add "Bearer [your auth token]" to the Authorization header of HTTP request 
     (If you use this page, swagger UI, you can click the Authorize button and enter your auth token).
-    The source code is on GitHub [https://github.com/oldperson/other/tree/mongodb](https://github.com/oldperson/other/tree/mongodb)
+    The source code is on GitHub [https://github.com/oldperson/simple-restful-reddit/tree/mongodb](https://github.com/oldperson/simple-restful-reddit/tree/mongodb)
   version: 2.0.0
 servers:
     - url: 'https://simplerestfulreddit.ddns.net/v2'
