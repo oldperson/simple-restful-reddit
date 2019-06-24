@@ -6,8 +6,8 @@
   "scripts": {
     "prod": "cross-env NODE_ENV=production JWT_SECRET_KEY=thisissecrtkey PORT=3001 REDDIT_DB_CONNECTION=mysql://reddit_app:aaa246@localhost:3306/reddit nodemon app.js",
     "test": "npm run unit-test && npm run integration-test",
-    "unit-test":"cross-env NODE_ENV=test ./node_modules/.bin/mocha --exit test/unit/**/*.test.js",
-    "integration-test":"cross-env NODE_ENV=test ./node_modules/.bin/mocha --timeout 999999 --exit test/integration/**/*.test.js"
+    "unit-test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --exit test/unit/**/*.test.js",
+    "integration-test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --timeout 999999 --exit test/integration/**/*.test.js"
   },
   "author": "",
   "license": "ISC",
@@ -27,13 +27,14 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "cross-env": "^5.2.0",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
     "mocha": "^5.2.0",
     "proxyquire": "^2.1.0",
-    "sequelize-cli": "^5.4.0",
+    "sequelize-cli": "^5.5.0",
     "sinon": "^7.2.7"
   }
 }
