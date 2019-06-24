@@ -4,7 +4,7 @@ const {
   sequelize, User, Community, Post, Vote,
 } = require('../../../orm/models');
 const { PostRepository } = require('../../../repositories/postRepository');
-const { IdentityNotFoundError } = require('../../../repositories/errors');
+const { IdentityNotFoundError, EntityNotFoundError } = require('../../../repositories/errors');
 
 const postRepository = new PostRepository(Post);
 
@@ -168,6 +168,22 @@ describe('postRepository', () => {
         .then((posts) => {
           expect(posts).to.lengthOf(3);
         });
+    });
+  });
+
+  describe('findById', () => {
+    it('should return Promise<Model> when the id is found', () => {
+      return postRepository.findById(2)
+        .then((post) => {
+          expect(post).to.be.exist;
+          expect(post.postId).to.equal(2);
+        });
+    });
+
+    it('should return Promise<EntityNotFoundError> when the id is not found', () => {
+      return postRepository.findById(99)
+        .then(() => expect.fail())
+        .catch(error => expect(error).to.be.instanceof(EntityNotFoundError));
     });
   });
 });

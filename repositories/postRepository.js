@@ -1,5 +1,14 @@
 const GenericRepository = require('./genericRepository');
-const { IdentityNotFoundError, isForeignKeyError } = require('./errors');
+const { IdentityNotFoundError, isForeignKeyError, EntityNotFoundError } = require('./errors');
+
+const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId,
+                             Community.communityId, Community.communityName,
+                             (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
+                             (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
+                             Post.updatedAt, Post.createdAt
+                        FROM Post
+                       INNER JOIN Community
+                          ON Post.communityId = Community.communityId`;
 
 /**
  * @class Construct a post repository
@@ -57,15 +66,7 @@ class PostRepository extends GenericRepository {
       sort: 'new',
     }, options);
 
-    const sqlTrunks = [
-      `SELECT Post.postId, Post.title, Post.authorId,
-              Community.communityId, Community.communityName,
-              (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
-              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
-              Post.updatedAt, Post.createdAt
-         FROM Post
-        INNER JOIN Community
-           ON Post.communityId = Community.communityId`];
+    const sqlTrunks = [queryPostSql];
 
     if (communityName) {
       sqlTrunks.push('AND Community.communityName = :communityName');
@@ -96,6 +97,21 @@ class PostRepository extends GenericRepository {
     return this.sequelizeModel.sequelize.query(sqlTrunks.join(' '), {
       replacements,
       type: this.sequelizeModel.sequelize.QueryTypes.SELECT,
+    });
+  }
+
+  findById(postId) {
+    const sqlTrunks = [queryPostSql];
+    sqlTrunks.push('WHERE Post.postId = :postId');
+
+    return this.sequelizeModel.sequelize.query(sqlTrunks.join(' '), {
+      replacements: { postId },
+      type: this.sequelizeModel.sequelize.QueryTypes.SELECT,
+    }).then((posts) => {
+      if (posts && posts.length === 1) {
+        return Promise.resolve(posts[0]);
+      }
+      return Promise.reject(new EntityNotFoundError());
     });
   }
 }
