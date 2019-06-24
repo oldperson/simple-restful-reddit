@@ -58,9 +58,11 @@ class PostRepository extends GenericRepository {
     }, options);
 
     const sqlTrunks = [
-      `SELECT Post.postId, Post.title, Post.authorId, Post.updatedAt, Post.createdAt,
+      `SELECT Post.postId, Post.title, Post.authorId,
+              Community.communityId, Community.communityName,
               (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
-              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments
+              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
+              Post.updatedAt, Post.createdAt
          FROM Post
         INNER JOIN Community
            ON Post.communityId = Community.communityId`];
