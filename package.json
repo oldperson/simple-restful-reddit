@@ -5,10 +5,9 @@
   "main": "index.js",
   "scripts": {
     "prod": "cross-env NODE_ENV=production JWT_SECRET_KEY=thisissecrtkey PORT=3001 REDDIT_DB_CONNECTION=mysql://reddit_app:aaa246@localhost:3306/reddit nodemon app.js",
-    "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/unit/*.test.js",
-    "test-integration-repositories": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/integretion/repositories/*.test.js",
-    "test-unit-formats": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/unit/formats/*.test.js",
-    "test-unit-middlewares": "cross-env NODE_ENV=test ./node_modules/.bin/mocha test/unit/middlewares/*.test.js"
+    "test": "npm run unit-test && npm run integration-test",
+    "unit-test":"cross-env NODE_ENV=test ./node_modules/.bin/mocha --exit test/unit/**/*.test.js",
+    "integration-test":"cross-env NODE_ENV=test ./node_modules/.bin/mocha --timeout 999999 --exit test/integration/**/*.test.js"
   },
   "author": "",
   "license": "ISC",
