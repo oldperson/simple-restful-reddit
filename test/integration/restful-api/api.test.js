@@ -89,6 +89,11 @@ describe('api tests', () => {
       .then((res) => {
         expect(res).to.have.status(200);
       }));
+
+    it('should return HTTP 404', () => request.get('/posts/5d108072c0fdf2e397034894')
+      .then((res) => {
+        expect(res).to.have.status(404);
+      }));
   });
 
   describe('PATCH /posts/{postId}', () => {

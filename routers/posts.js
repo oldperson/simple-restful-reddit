@@ -18,12 +18,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
 
   router.get('/:postId', (req, res, next) => {
     postRepository.findById(req.params.postId)
-      .then((post) => {
-        if (!post) {
-          return res.status(404);
-        }
-        return res.status(200).json(post);
-      })
+      .then(post => res.status(200).json(post))
       .catch(error => next(error));
   });
 
