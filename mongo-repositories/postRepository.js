@@ -10,6 +10,38 @@ const sortToOption = Object.freeze({
   },
 });
 
+function getMongooseQueryConditions(options) {
+  const conditions = {};
+
+  if (options.search) {
+    conditions.title = new RegExp(options.search);
+  }
+
+  return conditions;
+}
+
+function getMongooseQueryOptions(options) {
+  const queryOptions = {
+    skip: 0,
+    limit: 20,
+    sort: { updatedAt: -1 },
+  };
+
+  if (options.offset) {
+    queryOptions.skip = options.offset;
+  }
+
+  if (options.limit) {
+    queryOptions.limit = options.limit;
+  }
+
+  if (options.sort) {
+    queryOptions.sort = sortToOption[options.sort];
+  }
+
+  return queryOptions;
+}
+
 /**
  * @class Construct a post repository
  * @param {Object} postModel Set up model to access resources.
@@ -50,45 +82,13 @@ class PostRepository extends GenericRepository {
     const conditions = getMongooseQueryConditions(options);
     const projection = null;
     const queryOptions = getMongooseQueryOptions(options);
-    
-    if (communityName != null) { 
+
+    if (communityName != null) {
       conditions.communityName = communityName;
     }
 
     return this.mongooseModel.find(conditions, projection, queryOptions).exec();
   }
-}
-
-function getMongooseQueryConditions(options) {
-  const conditions = {};
-
-  if (options.search) {
-    conditions.title = new RegExp(options.search);
-  }
-
-  return conditions;
-}
-
-function getMongooseQueryOptions(options) {
-  const queryOptions = {
-    skip: 0,
-    limit: 20,
-    sort: { updatedAt: -1 },
-  };
-  
-  if (options.offset) {
-    queryOptions.skip = options.offset;
-  }
-
-  if (options.limit) {
-    queryOptions.limit = options.limit;
-  }
-
-  if (options.sort) {
-    queryOptions.sort = sortToOption[options.sort];
-  }
-
-  return queryOptions;
 }
 
 module.exports.PostRepository = PostRepository;
