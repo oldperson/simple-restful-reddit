@@ -3,7 +3,7 @@ const { IdentityNotFoundError, isForeignKeyError, EntityNotFoundError } = requir
 
 const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId,
                              Community.communityId, Community.communityName,
-                             (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
+                             (SELECT CAST(IFNULL(SUM(Vote.value), 0) AS SIGNED) FROM Vote WHERE Vote.postId = Post.postId) as votes,
                              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
                              Post.updatedAt, Post.createdAt
                         FROM Post
