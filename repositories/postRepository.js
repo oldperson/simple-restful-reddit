@@ -42,7 +42,8 @@ class PostRepository extends GenericRepository {
   }
 
   /**
-   * @param {string} communityName
+   * @param {string} communityName Find the posts of the community, if communityName is null,
+   *  find posts without considering the community.
    * @param {object} [options={}]
    * @param {number} [options.offset=0]
    * @param {number} [options.limit=20]
@@ -55,20 +56,25 @@ class PostRepository extends GenericRepository {
       limit: 20,
       sort: 'new',
     }, options);
+
     const sqlTrunks = [
       `SELECT Post.postId, Post.title, Post.authorId, Post.updatedAt, Post.createdAt,
               (SELECT SUM(Vote.value) FROM Vote WHERE Vote.postId = Post.postId) as votes,
               (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments
          FROM Post
         INNER JOIN Community
-           ON Post.communityId = Community.communityId
-          AND Community.communityName = :communityName`];
+           ON Post.communityId = Community.communityId`];
 
-    replacements.communityName = communityName;
+    if (communityName) {
+      sqlTrunks.push('AND Community.communityName = :communityName');
+      replacements.communityName = communityName;
+    }
+
     if (options.search) {
       replacements.search = `%${replacements.search}%`;
       sqlTrunks.push('AND Post.title LIKE :search');
     }
+
     switch (options.sort) {
       case 'new':
         sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');
@@ -84,6 +90,7 @@ class PostRepository extends GenericRepository {
         break;
     }
     sqlTrunks.push('LIMIT :limit OFFSET :offset');
+
     return this.sequelizeModel.sequelize.query(sqlTrunks.join(' '), {
       replacements,
       type: this.sequelizeModel.sequelize.QueryTypes.SELECT,
