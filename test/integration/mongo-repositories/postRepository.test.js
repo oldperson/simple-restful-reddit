@@ -177,9 +177,9 @@ describe('postRepository', () => {
 
     it('should find posts when communityName is null', () => {
       return postRepository.findUnder(null)
-      .then((posts) => {
-        expect(posts).to.lengthOf(3);
-      });
+        .then((posts) => {
+          expect(posts).to.lengthOf(3);
+        });
     });
   });
 });
