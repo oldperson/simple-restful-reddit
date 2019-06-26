@@ -1,7 +1,7 @@
 const GenericRepository = require('./genericRepository');
 const { IdentityNotFoundError, isForeignKeyError, EntityNotFoundError } = require('./errors');
 
-const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId,
+const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId, Post.content,
                              Community.communityId, Community.communityName,
                              (SELECT CAST(IFNULL(SUM(Vote.value), 0) AS SIGNED) FROM Vote WHERE Vote.postId = Post.postId) as votes,
                              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
@@ -113,6 +113,23 @@ class PostRepository extends GenericRepository {
       }
       return Promise.reject(new EntityNotFoundError());
     });
+  }
+
+  /**
+  * Update properties of models.
+  * @param {object} changes Valuse would be changed.
+  * @param {*} where Values for find the models should be changed.
+  * @returns {Promise<Array<object>} Array of updated model.
+  */
+  update(changes, where) {
+    return super.update(changes, where)
+      .catch((error) => {
+        if (error instanceof EntityNotFoundError) {
+          // eslint-disable-next-line no-param-reassign
+          error.message = 'the author does not have this post';
+        }
+        return Promise.reject(error);
+      });
   }
 }
 

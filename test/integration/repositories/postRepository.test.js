@@ -186,4 +186,15 @@ describe('postRepository', () => {
         .catch(error => expect(error).to.be.instanceof(EntityNotFoundError));
     });
   });
+
+  describe('update', () => {
+    it('should have error message tell the user that the post is not his/hers', () => {
+      return postRepository.update({ content: 'should not uupdate' }, { postId: 1, authorId: 99 })
+        .then(() => expect.fail())
+        .catch((error) => {
+          expect(error).to.be.instanceof(EntityNotFoundError);
+          expect(error.message).to.equal('the author does not have this post');
+        });
+    });
+  });
 });
