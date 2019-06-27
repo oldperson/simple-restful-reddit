@@ -1,3 +1,4 @@
+const incrementRepliesSql = 'UPDATE comment SET replies = IFNULL(replies, 0) + 1 WHERE commentId = :parentCommentId; ';
 module.exports = (sequelize, DataTypes) => sequelize.define('Comment', {
   commentId: {
     type: DataTypes.INTEGER,
@@ -35,4 +36,19 @@ module.exports = (sequelize, DataTypes) => sequelize.define('Comment', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-}, {});
+  replies: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    comment: 'Count replies of comments, if this record is a reply or comment without any reply, this column would be null',
+  },
+},
+{
+  hooks: {
+    afterCreate: (newComment) => {
+      if (newComment.parentCommentId) {
+        return sequelize.query(incrementRepliesSql, { replacements: newComment });
+      }
+      return Promise.resolve();
+    },
+  },
+});
