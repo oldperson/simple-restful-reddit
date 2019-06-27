@@ -156,6 +156,11 @@ describe('api tests', () => {
       .auth(authToken, { type: 'bearer' })
       .send({ content: 'this is the reply' })
       .then(res => expect(res).to.have.status(201)));
+
+    it('should response HTTP 404 when commentId not found', () => request.post('/comments/999/replies')
+      .auth(authToken, { type: 'bearer' })
+      .send({ content: 'this is the reply' })
+      .then(res => expect(res).to.have.status(404)));
   });
 
   /* ------------------------------- /authTokens ------------------------------ */

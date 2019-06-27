@@ -1,4 +1,4 @@
-const { IdentityNotFoundError, EntityNotFoundError } = require('./errors');
+const { IdentityNotFoundError, EntityNotFoundError, isForeignKeyError } = require('./errors');
 
 /**
  * @class Construct a repository providing generic operations on the resource.
@@ -18,7 +18,7 @@ class GenericRepository {
     return this.sequelizeModel.create(data)
       .then(model => model.toJSON())
       .catch((error) => {
-        if (error.name === 'SequelizeForeignKeyConstraintError') {
+        if (isForeignKeyError(error)) {
           return Promise.reject(new IdentityNotFoundError());
         }
         return Promise.reject(error);
