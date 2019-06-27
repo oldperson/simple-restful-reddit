@@ -13,6 +13,7 @@ function errorHandler(env) {
   if (env === 'production') {
     // eslint-disable-next-line no-unused-vars
     return function (err, req, res, next) {
+      console.error(`${new Date().toLocaleString()} ${err.stack}`);
       return res.status(500).json(createErrorBody('Internal Server Error'));
     };
   }

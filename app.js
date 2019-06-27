@@ -17,6 +17,7 @@ const createCommentRouter = require('./routers/comments');
 const jwtErrorHandler = require('./middlewares/jwtErrorHandler');
 const repositoryErrorHandler = require('./middlewares/repositoryErrorHandler');
 const authorizationHandler = require('./middlewares/authoriztionHandler');
+const unhandledErrorHandler = require('./middlewares/errorHandler');
 
 const port = process.env.PORT || 3000;
 const secret = process.env.JWT_SECRET_KEY;
@@ -66,5 +67,10 @@ app.get('/hello/:name', (req, res) => {
 /* ---------------------- register post error handlers ---------------------- */
 app.use(jwtErrorHandler);
 app.use(repositoryErrorHandler);
+/**
+ * The unhandledErrorHandler should be in the bottom of the middleware stack,
+ * to hide all unhandled errors details and response HTTP 500 in production eviornment.
+ * */
+app.use(unhandledErrorHandler(process.env.NODE_ENV));
 
 module.exports = app;
