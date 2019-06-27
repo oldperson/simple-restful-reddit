@@ -42,7 +42,7 @@ describe('repositoryErrorHandler', () => {
     expect(next.args[0][0]).to.eql(err);
   });
 
-  it('should response HTTP 409 when handle IdentityNotFoundError', () => {
+  it('should response HTTP 404 when handle IdentityNotFoundError', () => {
     // Arrange
     const err = new IdentityNotFoundError('feilds', 'value');
     const req = {};
@@ -56,7 +56,7 @@ describe('repositoryErrorHandler', () => {
     repositoryErrorHandler(err, req, res, next);
 
     // Assert
-    expect(res.status.args[0][0]).to.equal(409);
+    expect(res.status.args[0][0]).to.equal(404);
     expect(res.json.args[0][0]).to.exist;
     expect(next.notCalled).to.be.true;
   });
