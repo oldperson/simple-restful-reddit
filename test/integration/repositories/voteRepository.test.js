@@ -39,12 +39,10 @@ describe('VoteRepository', () => {
   describe('CreateOrUpdate', () => {
     afterEach(() => Vote.truncateIgnoreFK());
     it('should create new vote', () => voteRepository.createOrUpdate(defaultVote)
-      .then((success) => {
-        if (sequelize.getDialect() === 'sqlite') {
-          expect(success).to.be.undefined;
-        } else {
-          expect(success).to.be.true;
-        }
+      .then((vote) => {
+        expect(vote).to.be.exist;
+        expect(vote.userId).to.equal(defaultUser.userId);
+        expect(vote.postId).to.equal(defaultPost.postId);
       }));
 
     it('should update vote', () => {
@@ -52,14 +50,11 @@ describe('VoteRepository', () => {
       updated.value = -1;
       return Vote.create(defaultVote)
         .then(() => voteRepository.createOrUpdate(updated))
-        .then((success) => {
-          if (sequelize.getDialect() === 'sqlite') {
-            expect(success).to.be.undefined;
-          } else if (sequelize.getDialect() === 'mysql') {
-            expect(success).to.be.false;
-          } else {
-            expect(success).to.be.true;
-          }
+        .then((vote) => {
+          expect(vote).to.be.exist;
+          expect(vote.userId).to.equal(defaultUser.userId);
+          expect(vote.postId).to.equal(defaultPost.postId);
+          expect(vote.value).to.equal(-1);
         });
     });
 

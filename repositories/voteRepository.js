@@ -15,6 +15,7 @@ class VoteRepository extends GenericRepository {
    */
   createOrUpdate(vote) {
     return this.sequelizeModel.upsert(vote)
+      .then(() => this.sequelizeModel.findOne({ where: vote, raw: true }))
       .catch((error) => {
         if (isForeignKeyError(error)) {
           return Promise.reject(new IdentityNotFoundError({

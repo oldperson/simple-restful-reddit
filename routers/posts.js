@@ -51,7 +51,7 @@ function create({ postRepository, commentRepository, voteRepository }) {
     req.body.userId = req.user.userId;
     req.body.postId = req.params.postId;
     voteRepository.createOrUpdate(req.body)
-      .then(() => res.send(200))
+      .then(vote => res.status(200).json(vote))
       .catch(error => next(error));
   });
 
