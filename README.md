@@ -2,8 +2,8 @@
 A web application provides a set of APIs mock functionalities of [Reddit](https://www.reddit.com/).
 
 ## Try It Out
-* API endpoint https://simplerestfulreddit.ddns.net/
-* API doc https://app.swaggerhub.com/apis-docs/oldperson/simple-res_tful_reddit/1.0.0
+* API endpoint https://simplerestfulreddit.ddns.net/v1/
+* API doc https://app.swaggerhub.com/apis-docs/oldperson/simple_restful_reddit/1.0.0
 
 ## Build With
 * [Node.js](http://nodejs.org/)
