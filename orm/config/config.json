@@ -17,11 +17,7 @@
     "logging": false
   },
   "test": {
-    "username": "test_reddit_app",
-    "password": "aaa246",
-    "database": "test_reddit",
-    "host": "localhost",
-    "port": "3306",
+    "use_env_variable": "REDDIT_DB_CONNECTION",
     "operatorsAliases": false,
     "dialect": "mysql",
     "dialectOptions":{
