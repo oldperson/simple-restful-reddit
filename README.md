@@ -1,4 +1,4 @@
-# Simple restful Reddit
+# Simple restful Reddit [![Build Status](https://travis-ci.com/oldperson/simple-restful-reddit.svg?branch=mysql)](https://travis-ci.com/oldperson/simple-restful-reddit)
 A web application provides a set of APIs mock functionalities of [Reddit](https://www.reddit.com/).
 
 ## Try It Out
