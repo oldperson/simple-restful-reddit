@@ -3,7 +3,7 @@ A web application provides a set of APIs mock functionalities of [Reddit](https:
 
 ## Try It Out
 * API endpoint https://simplerestfulreddit.ddns.net/v2/
-* API doc https://app.swaggerhub.com/apis/oldperson/simple-restful-reddit/2.0.0
+* API doc https://app.swaggerhub.com/apis-docs/oldperson/simple_restful_reddit/2.0.0
  * Create user <br/><br/>![Create user](/doc/img/swaggerUI_create_user.png)
  * Get auth token <br/><br/>![Create user](/doc/img/swaggerUI_create_auth_token.png)
  * Athentication/Authorization with auth token 
