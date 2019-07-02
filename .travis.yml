@@ -1,0 +1,14 @@
+dist: xenial
+language: node_js
+node_js:
+  - "10"
+env:
+    - NODE_ENV=test PORT=3001 JWT_SECRET_KEY=thisissecrtkey REDDIT_MONGODB_CONNECTION="mongodb+srv://127.0.0.1 /reddit_test"
+services:
+  - mongodb
+install:
+    - npm install
+before_script:
+  - sleep 15
+script:
+  - npm test
