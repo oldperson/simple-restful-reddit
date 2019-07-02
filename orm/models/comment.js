@@ -1,4 +1,4 @@
-const incrementRepliesSql = 'UPDATE comment SET replies = IFNULL(replies, 0) + 1 WHERE commentId = :parentCommentId; ';
+const incrementRepliesSql = 'UPDATE Comment SET replies = IFNULL(replies, 0) + 1 WHERE commentId = :parentCommentId; ';
 module.exports = (sequelize, DataTypes) => sequelize.define('Comment', {
   commentId: {
     type: DataTypes.INTEGER,
