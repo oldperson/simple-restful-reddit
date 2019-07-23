@@ -7,11 +7,13 @@
     "prod": "cross-env NODE_ENV=production JWT_SECRET_KEY=thisissecrtkey PORT=3001 REDDIT_DB_CONNECTION=mysql://reddit_app:aaa246@localhost:3306/reddit nodemon app.js",
     "test": "npm run unit-test && npm run integration-test",
     "unit-test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --exit test/unit/**/*.test.js",
-    "integration-test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --timeout 999999 --exit test/integration/**/*.test.js"
+    "integration-test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --timeout 999999 --exit test/integration/**/*.test.js",
+    "test-redis": "cross-env REDIS_HOST=127.0.0.2 PORT=6379 node ./redis/index.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async-redis": "^1.1.7",
     "bcrypt": "^3.0.4",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
@@ -20,8 +22,10 @@
     "express-unless": "^0.5.0",
     "express-validator": "^5.3.1",
     "jsonwebtoken": "^8.5.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "mysql2": "^1.6.5",
+    "redis": "^2.8.0",
+    "redis-commands": "^1.5.0",
     "sequelize": "^4.41.2",
     "sqlite3": "^4.0.4"
   },
