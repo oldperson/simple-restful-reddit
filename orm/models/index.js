@@ -5,7 +5,7 @@ const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require('../config/config.json')[env];
-
+const createFuntionSql = require('../functions');
 /**
  * The DB instance base on Sequelize, contains:\
  * 1.The cached models to manuplate tables.\
@@ -60,6 +60,9 @@ function truncateIgnoreFK() {
 Object.keys(db).forEach((modelName) => {
   db[modelName].truncateIgnoreFK = truncateIgnoreFK;
 });
+
+// create custom function
+sequelize.addHook('afterBulkSync', () => sequelize.query(createFuntionSql));
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
