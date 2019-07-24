@@ -3,7 +3,8 @@ const { IdentityNotFoundError, isForeignKeyError, EntityNotFoundError } = requir
 
 const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId, Post.content,
                              Community.communityId, Community.communityName,
-                             (SELECT CAST(IFNULL(SUM(Vote.value), 0) AS SIGNED) FROM Vote WHERE Vote.postId = Post.postId) as votes,
+                             (SELECT COUNT(*) FROM Vote WHERE Vote.postId = Post.postId AND Vote.value = 1) AS ups,
+                             (SELECT COUNT(*) FROM Vote WHERE Vote.postId = Post.postId AND Vote.value = -1) AS downs,
                              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
                              Post.updatedAt, Post.createdAt
                         FROM Post
@@ -82,11 +83,14 @@ class PostRepository extends GenericRepository {
       case 'new':
         sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');
         break;
-      case 'best':
-        sqlTrunks.push('ORDER BY Votes DESC');
+      case 'top':
+        sqlTrunks.push('ORDER BY top(ups, downs) DESC');
         break;
       case 'hot':
-        sqlTrunks.push('ORDER BY Post.UpdatedAt DESC, Votes DESC');
+        sqlTrunks.push('ORDER BY hot(ups, downs, Post.CreatedAt) DESC');
+        break;
+      case 'controversial':
+        sqlTrunks.push('ORDER BY controversy(ups, downs) DESC');
         break;
       default:
         sqlTrunks.push('ORDER BY Post.UpdatedAt DESC');

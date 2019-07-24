@@ -1,19 +1,13 @@
 /* eslint-disable arrow-body-style */
 const { expect } = require('chai');
 const {
-  sequelize, User, Community, Post, Vote,
+  sequelize, Community, Post, Vote,
 } = require('../../../orm/models');
 const { PostRepository } = require('../../../repositories/postRepository');
 const { IdentityNotFoundError, EntityNotFoundError } = require('../../../repositories/errors');
 
 const postRepository = new PostRepository(Post);
 
-const defaultUser = {
-  userId: 1,
-  userName: 'test',
-  passwordHash: 'aaaaaa',
-  email: 'ggg@gmail.com',
-};
 const defaultCommunity = {
   communityId: 1,
   communityName: 'comForTest',
@@ -34,8 +28,8 @@ const defaultPosts = [
     content: 'test2 ccontent',
     authorId: 1,
     communityId: 1,
-    createdAt: '2019-3-30',
-    updatedAt: '2019-3-30',
+    createdAt: '2019-4-7',
+    updatedAt: '2019-4-7',
   },
   {
     postId: 3,
@@ -47,17 +41,98 @@ const defaultPosts = [
     updatedAt: '2019-4-1',
   },
 ];
-const defaultVote = {
-  postId: 2,
-  userId: 1,
-  value: 1,
-};
+
+
+const insertUserSql = `INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('1', 'testuser1', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('2', 'testuser2', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('3', 'testuser3', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('4', 'testuser4', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('5', 'testuser5', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('6', 'testuser6', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('7', 'testuser7', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('8', 'testuser8', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('9', 'testuser9', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');
+INSERT INTO User (userId, userName, email, passwordHash, createdAt, updatedAt)
+VALUES ('10', 'testuser10', 'test@gmail.com', 'pasword', '2019-8-17', '2019-8-17');`;
+
+/**
+ * { postId: 1, ups: 10, down: 0, createdAt: 2019-3-29 }
+ * { postId: 2, ups: 9, down: 0, createdAt: 2019-4-7 }
+ * { postId: 3, ups: 5, down: 5, createdAt: 2019-4-1 }
+ */
+const insertVotesSql = `INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 1, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 2, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 3, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 4, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 5, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 6, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 7, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 8, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 9, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (1, 10, 1, '2019-8-11', '2019-8-11');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 1, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 2, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 3, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 4, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 5, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 6, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 7, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 8, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (2, 9, 1, '2019-8-12', '2019-8-12');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 1, 1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 2, 1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 3, 1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 4, 1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 5, 1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 6, -1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 7, -1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 8, -1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 9, -1, '2019-8-13', '2019-8-13');
+INSERT INTO Vote (postId, userId, value, createdAt, updatedAt)
+VALUES (3, 10, -1, '2019-8-13', '2019-8-13');`;
 
 // TODO: resolve table lock, when all repository tests run simultaneously.
 describe('postRepository', () => {
   before('Set up user and community data',
     () => sequelize.sync({ force: true })
-      .then(() => User.create(defaultUser))
+      .then(() => sequelize.query(insertUserSql))
       .then(() => Community.create(defaultCommunity)));
 
   describe('creaeteUnder', () => {
@@ -66,7 +141,7 @@ describe('postRepository', () => {
       const post = {
         title: 'new post',
         content: 'hello',
-        authorId: defaultUser.userId,
+        authorId: 1,
       };
       return postRepository.createUnder(defaultCommunity.communityName, post)
         .then((result) => {
@@ -79,7 +154,7 @@ describe('postRepository', () => {
       const post = {
         title: 'new post',
         content: 'hello',
-        authorId: defaultUser.userId,
+        authorId: 1,
       };
       return postRepository.createUnder('notExistsCom', post)
         .catch((error) => {
@@ -102,7 +177,7 @@ describe('postRepository', () => {
 
   describe('findUnder', () => {
     before(() => Post.bulkCreate(defaultPosts)
-      .then(() => Vote.upsert(defaultVote)));
+      .then(() => sequelize.query(insertVotesSql)));
     after(() => Vote.truncateIgnoreFK());
     it('should use default options when options are undifined', () => postRepository.findUnder(defaultCommunity.communityName)
       .then((results) => {
@@ -135,31 +210,37 @@ describe('postRepository', () => {
         });
     });
 
-    it('should sort by votes when options.sort is best', () => {
-      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'best' })
+    it('should sort by top', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'top' })
+        .then((posts) => {
+          expect(posts).to.lengthOf(3);
+          expect(posts[0].postId).to.equal(1);
+        });
+    });
+
+    it('should sort by hot', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'hot' })
         .then((posts) => {
           expect(posts).to.lengthOf(3);
           expect(posts[0].postId).to.equal(2);
         });
     });
 
-    it('should sort by votes when options.sort is hot', () => {
-      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'hot' })
+    it('should sort by controversial', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'controversial' })
         .then((posts) => {
           expect(posts).to.lengthOf(3);
           expect(posts[0].postId).to.equal(3);
-          expect(posts[1].postId).to.equal(2);
-          expect(posts[2].postId).to.equal(1);
         });
     });
 
-    it('should sort by votes when options.sort is new', () => {
-      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'hot' })
+    it('should sort by new', () => {
+      return postRepository.findUnder(defaultCommunity.communityName, { sort: 'new' })
         .then((posts) => {
           expect(posts).to.lengthOf(3);
-          expect(posts[0].postId).to.equal(3);
-          expect(posts[1].postId).to.equal(2);
-          expect(posts[2].postId).to.equal(1);
+          expect(posts[0].postId).to.equal(2); // 2019-4-7
+          expect(posts[1].postId).to.equal(3); // 2019-4-1
+          expect(posts[2].postId).to.equal(1); // 2019-3-29
         });
     });
 
