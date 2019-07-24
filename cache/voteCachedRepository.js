@@ -20,7 +20,7 @@ class VoteCachedRepository {
     let communityName = null;
     let postCreatedAt = null;
 
-    this.voteRepository.createOrUpdate(vote)
+    return this.voteRepository.createOrUpdate(vote)
       .then((result) => {
         voted = result;
         const batch = redisClient.batch();
@@ -36,12 +36,15 @@ class VoteCachedRepository {
       })
       .then((results) => {
         [communityName, postCreatedAt] = results;
+        postCreatedAt = new Date(postCreatedAt);
         return redisClient.watch(upVotekey, downVotekey);
       })
-      .then(() => redisClient.batch()
-        .scard(upVotekey)
-        .scard(downVotekey)
-        .exec())
+      .then(() => {
+        const batch = redisClient.batch();
+        batch.scard(upVotekey);
+        batch.scard(downVotekey);
+        return batch.exec();
+      })
       .then((upsAndDowns) => {
         const batch = redisClient.batch();
         updatePostRanking(batch, vote.postId, communityName, ...upsAndDowns, postCreatedAt);
