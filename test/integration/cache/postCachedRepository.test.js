@@ -18,6 +18,7 @@ const postRepository = {
     updatedAt: new Date(2019, 7, 19),
   }]),
   findById: sinon.spy(),
+  findUnder: sinon.stub().resolves(),
 };
 
 const postCachedRepository = new PostCachedRepository(redisClient, postRepository);
@@ -161,6 +162,11 @@ describe('PostCachedRepository', () => {
       .then((results) => {
         expect(results).to.length(4);
         expect(results[0].title).to.equal('the most controversial');
+      }));
+
+    it('should call postRepository when searching keyword', () => postCachedRepository.findUnder(null, { search: 'theKyWord' })
+      .then(() => {
+        expect(postRepository.findUnder.called).to.be.true;
       }));
   });
 

@@ -43,8 +43,11 @@ class PostCachedRepository {
    * @param {string} [options.search]
    */
   findUnder(communityName, options = {}) {
-    // TODO: add search
-    // TODO: sync sorting method to repository of RMDB
+    // TODO: implement search base on inverted index
+    if (options.search) {
+      return this.postRepository.findUnder(communityName, options);
+    }
+
     const { redisClient } = this;
     const opt = Object.assign({
       offset: 0,
