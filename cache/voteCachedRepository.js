@@ -1,17 +1,8 @@
+const GenericCachedRepository = require('./genericCachedRepository');
 const { updatePostRanking } = require('../redis/helper');
 const key = require('../redis/key');
 
-class VoteCachedRepository {
-  /**
-   *
-   * @param {*} redisClient
-   * @param {*} voteRepository
-   */
-  constructor(redisClient, voteRepository) {
-    this.redisClient = redisClient;
-    this.voteRepository = voteRepository;
-  }
-
+class VoteCachedRepository extends GenericCachedRepository {
   createOrUpdate(vote) {
     const { redisClient } = this;
     const upVotekey = key.upvotesOfPost(vote.postId);
@@ -20,7 +11,7 @@ class VoteCachedRepository {
     let communityName = null;
     let postCreatedAt = null;
 
-    return this.voteRepository.createOrUpdate(vote)
+    return this.repository.createOrUpdate(vote)
       .then((result) => {
         voted = result;
         const batch = redisClient.batch();

@@ -1,3 +1,4 @@
+const GenericCachedRepository = require('./genericCachedRepository');
 const { updatePostRanking } = require('../redis/helper');
 const key = require('../redis/key');
 
@@ -5,12 +6,7 @@ const key = require('../redis/key');
  * @class Construct a post repository
  * @param {Object} postModel Set up model to access resources.
  */
-class PostCachedRepository {
-  constructor(redisClient, postRepository) {
-    this.redisClient = redisClient;
-    this.postRepository = postRepository;
-  }
-
+class PostCachedRepository extends GenericCachedRepository {
   /**
    * Create a post under in given community.
    * @param {string} communityName
@@ -21,7 +17,7 @@ class PostCachedRepository {
     const { redisClient } = this;
     let posted = null;
 
-    return this.postRepository.createUnder(communityName, post)
+    return this.repository.createUnder(communityName, post)
       .then((result) => {
         posted = result;
         const batch = redisClient.batch();
@@ -45,7 +41,7 @@ class PostCachedRepository {
   findUnder(communityName, options = {}) {
     // TODO: implement search base on inverted index
     if (options.search) {
-      return this.postRepository.findUnder(communityName, options);
+      return this.repository.findUnder(communityName, options);
     }
 
     const { redisClient } = this;
@@ -119,10 +115,10 @@ class PostCachedRepository {
   * @returns {Promise<Array<object>} Array of updated model.
   */
   update(changes, where) {
-    const { redisClient, postRepository } = this;
+    const { redisClient, repository } = this;
     let posts = null;
 
-    return postRepository.update(changes, where)
+    return repository.update(changes, where)
       .then((updated) => {
         posts = updated;
         const batch = redisClient.batch();
