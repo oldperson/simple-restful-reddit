@@ -17,7 +17,15 @@ const postRepository = {
     createdAt: new Date(2019, 7, 19),
     updatedAt: new Date(2019, 7, 19),
   }]),
-  findById: sinon.spy(),
+  findById: sinon.stub().resolves({
+    postId: 2,
+    title: 'uncached',
+    content: 'uncached',
+    communityName: 'tsetCom',
+    authorId: 1,
+    createdAt: new Date(2019, 7, 19),
+    updatedAt: new Date(2019, 7, 19),
+  }),
   findUnder: sinon.stub().resolves(),
 };
 
@@ -56,6 +64,13 @@ describe('PostCachedRepository', () => {
       .then((result) => {
         expect(result).to.be.exist;
         expect(postRepository.findById.notCalled).to.be.true;
+      }));
+
+    it('should find call this.repository.findById() and cache the post', () => postCachedRepository.findById(2)
+      .then((result) => {
+        expect(result).to.be.exist;
+        expect(result.title).to.equal('uncached');
+        expect(postRepository.findById.called).to.be.true;
       }));
   });
 

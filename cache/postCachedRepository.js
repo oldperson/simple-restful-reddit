@@ -92,7 +92,7 @@ class PostCachedRepository extends GenericCachedRepository {
   }
 
   findById(postId) {
-    const { redisClient, postRepository } = this;
+    const { redisClient, repository } = this;
     let post = null;
 
     return redisClient.hgetall(key.postOfposts(postId))
@@ -100,7 +100,7 @@ class PostCachedRepository extends GenericCachedRepository {
         if (cached) {
           return Promise.resolve(cached);
         }
-        return postRepository.findById(postId);
+        return repository.findById(postId);
       })
       .then((unCached) => {
         post = unCached;
