@@ -9,6 +9,12 @@ const { CommunityRepository } = require('./repositories/communityRepository');
 const { PostRepository } = require('./repositories/postRepository');
 const { VoteRepository } = require('./repositories/voteRepository');
 
+// cache
+const redisClient = require('./redis');
+const { PostCachedRepository } = require('./cache/postCachedRepository');
+const { VoteCachedRepository } = require('./cache/voteCachedRepository');
+const { CommentCachedRepository } = require('./cache/commentCachedRepository');
+
 const createAuthTokensRouter = require('./routers/authTokens');
 const createUserRouter = require('./routers/users');
 const createCommunityRouter = require('./routers/communities');
@@ -29,11 +35,23 @@ const communityRepository = new CommunityRepository(db.Community);
 const postRepository = new PostRepository(db.Post);
 const voteRepository = new VoteRepository(db.Vote);
 
+/* ------------------------ create cached-repository ------------------------ */
+const commentCachedRepository = new CommentCachedRepository(redisClient, commentRepository);
+const postCachedRepository = new PostCachedRepository(redisClient, postRepository);
+const voteCachedRepository = new VoteCachedRepository(redisClient, voteRepository);
+
 /* ----------------------------- create routers ----------------------------- */
 const authTokensRouter = createAuthTokensRouter({ userRepository, secret });
-const commentRouter = createCommentRouter({ commentRepository });
-const communityRouter = createCommunityRouter({ communityRepository, postRepository });
-const postRouter = createPostRouter({ postRepository, commentRepository, voteRepository });
+const commentRouter = createCommentRouter({ commentRepository: commentCachedRepository });
+const communityRouter = createCommunityRouter({
+  communityRepository,
+  postRepository: postCachedRepository,
+});
+const postRouter = createPostRouter({
+  postRepository: postCachedRepository,
+  commentRepository: commentCachedRepository,
+  voteRepository: voteCachedRepository,
+});
 const usersRouter = createUserRouter({ userRepository });
 
 /* ---------------------------- init application ---------------------------- */
