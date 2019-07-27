@@ -45,7 +45,7 @@ class PostCachedRepository extends GenericCachedRepository {
       return this.repository.findUnder(communityName, options);
     }
 
-    const { redisClient } = this;
+    const { redisClient, repository } = this;
     const opt = Object.assign({
       offset: 0,
       limit: 20,
@@ -80,6 +80,11 @@ class PostCachedRepository extends GenericCachedRepository {
         return batch.exec();
       })
       .then((result) => {
+        // cache miss
+        if (!result || result.length === 0) {
+          return repository.findUnder(communityName, options);
+        }
+
         result.forEach((post, i) => {
           // eslint-disable-next-line no-param-reassign
           post.ups = upAndDowns[i];

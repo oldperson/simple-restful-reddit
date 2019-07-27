@@ -145,6 +145,8 @@ describe('PostCachedRepository', () => {
       return batch.exec();
     });
 
+    afterEach('sinon restore', () => postRepository.findUnder.resetHistory());
+
     it('should find posts  when posts is null', () => postCachedRepository.findUnder(null)
       .then((results) => {
         expect(results).to.length(4);
@@ -183,7 +185,12 @@ describe('PostCachedRepository', () => {
       .then(() => {
         expect(postRepository.findUnder.called).to.be.true;
       }));
+
+    it('should call postRepository when the result is uncached', () => postCachedRepository.findUnder('UnExistComm')
+      .then(() => {
+        expect(postRepository.findUnder.called).to.be.true;
+      }));
   });
 
-  afterEach('sinon restore', () => sinon.restore());
+  after('sinon restore', () => sinon.restore());
 });
