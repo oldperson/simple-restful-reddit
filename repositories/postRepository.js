@@ -1,8 +1,7 @@
 const GenericRepository = require('./genericRepository');
 const { IdentityNotFoundError, isForeignKeyError, EntityNotFoundError } = require('./errors');
 
-const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId, Post.content,
-                             Community.communityId, Community.communityName,
+const queryPostSql = `SELECT Post.postId, Post.title, Post.authorId, Post.content, Community.communityName,
                              (SELECT COUNT(*) FROM Vote WHERE Vote.postId = Post.postId AND Vote.value = 1) AS ups,
                              (SELECT COUNT(*) FROM Vote WHERE Vote.postId = Post.postId AND Vote.value = -1) AS downs,
                              (SELECT COUNT(*) FROM Comment WHERE Comment.postId = Post.postId) as comments,
