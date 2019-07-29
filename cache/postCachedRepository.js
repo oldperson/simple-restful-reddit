@@ -20,11 +20,16 @@ class PostCachedRepository extends GenericCachedRepository {
     return this.repository.createUnder(communityName, post)
       .then((result) => {
         posted = result;
+        posted.comments = 0;
+        posted.ups = 0;
+        posted.downs = 0;
+
         const batch = redisClient.batch();
         // batch.sadd(key.postsOfCommunity(communityName), posted.postId);
         batch.hmset(key.postOfposts(posted.postId), posted);
         batch.hmset(key.postOfposts(posted.postId), 'comments', 0);
-        updatePostRanking(batch, posted.postId, posted.communityName, 0, 0, posted.createdAt);
+        updatePostRanking(batch, posted.postId, posted.communityName, posted.ups, posted.downs,
+          posted.createdAt);
         return batch.exec();
       })
       .then(() => posted);
