@@ -136,7 +136,11 @@ class PostCachedRepository extends GenericCachedRepository {
         posts.forEach(post => batch.hmset(key.postOfposts(post.postId), post));
         return batch.exec();
       })
-      .then(() => posts);
+      .then(() => {
+        const batch = redisClient.batch();
+        posts.forEach(post => batch.hgetall(key.postOfposts(post.postId)));
+        return batch.exec();
+      });
   }
 }
 
