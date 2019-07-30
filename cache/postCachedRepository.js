@@ -3,6 +3,47 @@ const { updatePostRanking } = require('../redis/helper');
 const key = require('../redis/key');
 
 /**
+ * Fetch cached posts
+ * @private
+ * @param {*} redisClient
+ * @param  {...any} postIds
+ * @returns {Promise<Array<object>}
+ */
+function fetchCachedPosts(redisClient, ...postIds) {
+  const batch = redisClient.batch();
+  let upAndDowns = null;
+
+  // fetch upvotes and downvotes of post
+  postIds.forEach((postId) => {
+    batch.scard(key.upvotesOfPost(postId));
+    batch.scard(key.downvotesOfPost(postId));
+  });
+
+  return batch.exec().then((result) => {
+    const innerBatch = redisClient.batch();
+    upAndDowns = result;
+
+    // fetch posts
+    postIds.forEach((postId) => {
+      innerBatch.hgetall(key.postOfposts(postId));
+    });
+
+    return innerBatch.exec();
+  }).then((result) => {
+    for (let i = 0; i < result.length; i += 1) {
+      if (result[i]) {
+        // eslint-disable-next-line no-param-reassign
+        result[i].ups = upAndDowns[2 * i];
+        // eslint-disable-next-line no-param-reassign
+        result[i].downs = upAndDowns[2 * i + 1];
+      }
+    }
+
+    return result;
+  });
+}
+
+/**
  * @class Construct a post repository
  * @param {Object} postModel Set up model to access resources.
  */
@@ -62,40 +103,14 @@ class PostCachedRepository extends GenericCachedRepository {
     const postsKey = communityName === null
       ? key.postsSortBy(opt.sort)
       : key.postsOfCommunitySortBy(communityName, opt.sort);
-    let postIds = null;
-    let upAndDowns = null;
 
     return redisClient.zrevrange(postsKey, start, stop)
-      .then((result) => {
-        postIds = result;
-        const batch = redisClient.batch();
-
-        postIds.forEach((postId) => {
-          batch.scard(key.upvotesOfPost(postId));
-          batch.scard(key.downvotesOfPost(postId));
-        });
-        return batch.exec();
-      })
-      .then((result) => {
-        upAndDowns = result;
-        const batch = redisClient.batch();
-        postIds.forEach((postId) => {
-          batch.hgetall(key.postOfposts(postId));
-        });
-        return batch.exec();
-      })
+      .then(postIds => fetchCachedPosts(redisClient, ...postIds))
       .then((result) => {
         // cache miss
         if (!result || result.length === 0) {
           return repository.findUnder(communityName, options);
         }
-
-        result.forEach((post, i) => {
-          // eslint-disable-next-line no-param-reassign
-          post.ups = upAndDowns[i];
-          // eslint-disable-next-line no-param-reassign
-          post.downs = upAndDowns[i + 1];
-        });
 
         return result;
       });
@@ -105,10 +120,10 @@ class PostCachedRepository extends GenericCachedRepository {
     const { redisClient, repository } = this;
     let post = null;
 
-    return redisClient.hgetall(key.postOfposts(postId))
+    return fetchCachedPosts(redisClient, postId)
       .then((cached) => {
-        if (cached) {
-          return Promise.resolve(cached);
+        if (cached[0]) {
+          return Promise.resolve(cached[0]);
         }
         return repository.findById(postId);
       })
@@ -137,9 +152,9 @@ class PostCachedRepository extends GenericCachedRepository {
         return batch.exec();
       })
       .then(() => {
-        const batch = redisClient.batch();
-        posts.forEach(post => batch.hgetall(key.postOfposts(post.postId)));
-        return batch.exec();
+        const postIds = posts.map((post => post.postId));
+
+        return fetchCachedPosts(redisClient, ...postIds);
       });
   }
 }
