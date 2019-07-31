@@ -4,9 +4,11 @@ language: node_js
 node_js:
   - "10"
 env:
-    - NODE_ENV=test PORT=3001 JWT_SECRET_KEY=thisissecrtkey REDDIT_DB_CONNECTION="mysql://root@127.0.0.1/reddit"
+    - NODE_ENV=test PORT=3001 JWT_SECRET_KEY=thisissecrtkey REDDIT_DB_CONNECTION="mysql://root@127.0.0.1/reddit REDIS_HOST=localhost
+REDIS_PORT=6379
 services:
   - mysql
+  - redis-server
 before_install:
   - mysql -e 'CREATE DATABASE IF NOT EXISTS reddit;'
 install:
