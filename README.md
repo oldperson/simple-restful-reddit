@@ -11,9 +11,18 @@ A web application provides a set of APIs mock functionalities of [Reddit](https:
    <br/><br/>![Create user](/doc/img/swaggerUI_auth2.png)
  * Create a community <br/><br/>![Create user](/doc/img/swaggerUI_create_community.png)
 
+## The Ranking System
+* Ranking posts by
+  - Top: The posts having more upvotes and fewer downvotes than other posts.
+  - Hot: The posts are newer and have more upvotes with fewer downvotes than other posts.
+  - Controversial: The posts having similar upvotes and downvotes, and more votes than other posts.
+  - New: The posts posted more recently than other posts.
+* Cache ranking lists in redis to increase performance.
+
 ## Build With
 * [Node.js](http://nodejs.org/)
 * [MySQL](https://www.mysql.com/)
+* [Redis](https://redis.io/)
 * [Express](http://expressjs.com/)
 * [Sequelize](http://docs.sequelizejs.com/)
 * [AWS](https://aws.amazon.com/tw/)
@@ -22,11 +31,14 @@ A web application provides a set of APIs mock functionalities of [Reddit](https:
 ```
 .
 ├── api-spec  # OpenAPI specification
+├── cache  # Wrap details of cache operations of redis
 ├── formats  # Format HTTP request and response
+├── lib # Independent modules dealing with specific logic
 ├── middlewares  # Middlewares of Express.js, handle application-wide HTTP request and response 
 ├── orm  # Set-ups of Sequelize.js, deal with databases manipulation
 │   ├── config
 │   └── models
+├── redis  # Set-ups of redis client and modules related to redis operations
 ├── repositories  # On the top of ORMs, wrap details of data manipulation
 ├── routers  # Routers of Express.js, handle api-specific HTTP request and response
 ├── test
