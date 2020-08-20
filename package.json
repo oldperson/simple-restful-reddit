@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "async-redis": "^1.1.7",
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
     "express-api-doc": "0.0.12",
